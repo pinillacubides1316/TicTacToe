@@ -1,0 +1,189 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+
+import javax.swing.*;
+import java.awt.event.*;
+import java.awt.*;
+import java.io.IOException;
+
+
+/**
+ *
+ * @author adria
+ */
+public class GUIConsole extends JFrame implements ChatIF{
+    
+    /**
+     * The default port to listen on.
+     */
+    //Final is a variable that once you declare it, it will never can be changed
+    final public static int DEFAULT_PORT = 5555;
+    
+    // instance  - class properties
+    ChatClient client;
+    
+    
+    
+    // buttons
+    private JButton closeB = new JButton("Close");
+    private JButton openB = new JButton("Open");
+    private JButton sendB = new JButton("Send");
+    private JButton quitB = new JButton("Quit");
+    private JButton loginB = new JButton("Login");
+    private JButton tictactoeB = new JButton("Tic Tac Toe");
+
+    // textfields
+    private JTextField portTxF = new JTextField("5555");
+    private JTextField hostTxF = new JTextField("127.0.0.1");
+    private JTextField messageTxF = new JTextField("");
+    private JTextField loginTxF = new JTextField("");
+
+    // labels
+    private JLabel emptyLB = new JLabel("", JLabel.RIGHT);
+    private JLabel portLB = new JLabel("Port: ", JLabel.RIGHT);
+    private JLabel hostLB = new JLabel("Host: ", JLabel.RIGHT);
+    private JLabel messageLB = new JLabel("Message: ", JLabel.RIGHT);
+    private JLabel loginLB = new JLabel("Login: ", JLabel.RIGHT);
+    private JLabel userListLB = new JLabel("User List: ", JLabel.RIGHT);
+    
+
+    // main chat area
+    private JTextArea messageList = new JTextArea();
+    
+
+
+    // constructor
+    public  GUIConsole ( String host, int port) //call the class we are extending - Jframe for this class
+    {
+        
+        // set window properties
+        super("Simple Chat GUI");
+        setSize(300, 400);
+        
+        // combo box*************************** produce the Error Could not listen for clientes when create the EchoServer
+        /*EchoServer server = new EchoServer(5555);
+        String[] players = server.getAllUsersList();
+        JComboBox<String> playersListCB = new JComboBox<>(players);*/
+
+        // creating a layout if the main window
+        setLayout( new BorderLayout(5,5));
+        JPanel bottom = new JPanel();
+        add( "Center", messageList );
+        add( "South" , bottom);
+
+        // layout of the bottom jframe
+        bottom.setLayout( new GridLayout(9,2,5,5));
+        bottom.add(hostLB); 		
+        bottom.add(hostTxF);
+        
+        bottom.add(portLB); 		
+        bottom.add(portTxF);
+        
+        bottom.add(loginLB);          
+        bottom.add(loginTxF);
+        
+        bottom.add(emptyLB);
+        bottom.add(loginB);   
+
+        bottom.add(messageLB);          
+        bottom.add(messageTxF);
+        
+        bottom.add(userListLB);
+        bottom.add(playersListCB);
+                
+        bottom.add(openB); 
+        bottom.add(sendB);
+        
+        bottom.add(tictactoeB);
+        bottom.add(closeB); 		
+        bottom.add(quitB);
+        
+        
+        // event Handler
+        sendB.addActionListener( new ActionListener() 
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                send(messageTxF.getText());
+                //display(messageTxF.getText()+"\n" );
+            }
+        });
+        
+        loginB.addActionListener( new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                // build a login command and send it to the server
+                client.handleMessageFromClientUI("#login "+loginTxF.getText());
+                // display a message for the user when is connected
+                send(" is connected!");
+            }
+
+        });
+        
+        // event handler - create an instance of the Tic Tac Toe object
+        tictactoeB.addActionListener( new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e)
+            {
+                // create an instance of the Tic Tac Toe object
+                // Initial state sets player 1 to the inviting player, player 2 is in the User List combo box.  **** 
+                // Active player is 2, game state is 1 (invite).  The board is empty.
+                /*
+                char[][] emptyBoard = new char[3][3];
+                String player2;
+                player2 = getUserFromCB();
+                TicTacToe ttt = new TicTacToe("Inviting Player","player2",2,1,emptyBoard);
+                // ============== Solve the user list combo box=========================
+                
+                //Display the TicTacToe board 
+                TTTBoardGUI tttB = new TTTBoardGUI();
+                tttB.setVisible(true);*/
+            }
+
+        });
+        
+        playersListCB.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e){
+                
+            }
+        });
+        
+        try {
+            client = new ChatClient(host, port, this);
+        } catch (IOException exception) {
+            System.out.println("Error: Can't setup connection!!!!"
+                    + " Terminating client.");
+            System.exit(1);
+        }
+        
+        // make the window visible
+        setVisible(true);
+
+    }
+    
+    /**
+    * This method overrides the method in the ChatIF interface. It displays a
+    * message onto the screen.
+    *
+    * @param message The string to be displayed.
+    */
+    public void display( String message ){
+        messageList.insert(message + "\n", 0);
+    }
+    
+    public static void main(String[] args){
+        
+        GUIConsole chat = new GUIConsole("localhost", 5555);
+    }
+    
+    // gathers text fromm the messageTxf and sends it to the 
+    // server via client.handleMessageFromClient
+    public void send(String message){
+
+        client.handleMessageFromClientUI(message);
+    }
+}

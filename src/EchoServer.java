@@ -1,0 +1,322 @@
+
+import java.io.*;
+import java.util.ArrayList;
+
+
+public class EchoServer extends AbstractServer {
+    //Class variables *************************************************
+
+    /**
+     * The default port to listen on.
+     */
+    //Final is a variable that once you declare it, it will never can be changed
+    final public static int DEFAULT_PORT = 5555;
+
+    //Constructors ****************************************************
+    /**
+     * Constructs an instance of the echo server.
+     *
+     * @param port The port number to connect on.
+     */
+    public EchoServer(int port) {
+
+        super(port);
+
+        try {
+            this.listen(); //Start listening for connections
+        } catch (Exception ex) {
+            System.out.println("ERROR - Could not listen for clients!");
+        }
+
+    }
+
+    //Instance methods ************************************************
+    /**
+     * This method handles any messages received from the client.
+     *
+     * @param msg The message received from the client.
+     * @param client The connection from which the message originated.
+     */
+    public void handleMessageFromClient(Object msg, ConnectionToClient client) {
+        System.out.println("Message received: " + msg + " from " + client);
+        //check if the message is a command(envelope)
+        if(msg instanceof Envelope)
+        {
+            //handle command from client
+            handleCommandFromClient((Envelope)msg, client);
+        }else{
+            //default handking of normal messages
+            //this.sendToAllClients(client.getInfo("userId")+": "+msg);
+            this.sendToAllClientsInRoom(msg, client);
+        }
+    }
+    
+    public void sendToAllClientsInRoom(Object msg, ConnectionToClient sender){
+        Thread[] clientThreadList = getClientConnections();
+        String userId = sender.getInfo("userId").toString();
+        String room = sender.getInfo("room").toString();
+        
+        // loop through all clients
+        for(int i = 0; i< clientThreadList.length; i++){
+            ConnectionToClient currentClient = ((ConnectionToClient) clientThreadList[i]);
+            String currentClientRoom = currentClient.getInfo("room").toString();
+            String senderRoom = sender.getInfo("room").toString();
+            
+            // if client[i] has the same room as sender then send the message
+            if(currentClientRoom.equals(senderRoom))
+            {
+                try{
+                    currentClient.sendToClient(room +" >> " + userId+": "+ msg);
+                }catch(Exception ex){
+                    
+                }
+            }
+        }
+    }
+    
+// sends a yell to everyone in all the rooms
+    public void sendToAllClientsInAllRooms(Object msg, ConnectionToClient sender){
+        Thread[] clientThreadList = getClientConnections();
+        String userId = sender.getInfo("userId").toString();
+        
+        // loop through all clients
+        
+        for(int i = 0; i< clientThreadList.length; i++)
+        {
+            ConnectionToClient currentClient = ((ConnectionToClient) clientThreadList[i]);
+            
+            // Send message to all rooms
+            try{
+                currentClient.sendToClient("Yell >> " + userId + ": " + msg);
+            }catch(Exception ex){
+            }
+        }
+    }
+    
+    //only sends to clients in the same room
+    public void sendToAClient(Object msg, ConnectionToClient sender, String pmTarget){
+        Thread[] clientThreadList = getClientConnections();
+        String userId = sender.getInfo("userId").toString();
+        
+        // loop through all clients
+        for(int i = 0; i< clientThreadList.length; i++){
+            ConnectionToClient currentClient = ((ConnectionToClient) clientThreadList[i]);
+            String currentClientUserId = currentClient.getInfo("userId").toString();
+            
+            // if client[i] has the user name that matches the PMs target
+            if(currentClientUserId.equals(pmTarget))
+            {
+                try{
+                    currentClient.sendToClient("PM >> " + userId+": "+ msg);
+                }catch(Exception ex){
+                    
+                }
+            }
+        }
+    }
+    
+    // find all users in the same room and create an ArrayList<String>
+    public void SameRoomUsersList(Object msg, ConnectionToClient sender){
+        Thread[] clientThreadList = getClientConnections();
+        String userId = sender.getInfo("userId").toString();
+        String senderRoom = sender.getInfo("room").toString();
+        ArrayList<String> usersList = new ArrayList<String>();
+        
+        // loop through all clients connections
+        for(int i = 0; i< clientThreadList.length; i++){
+            // get current client userId and room
+            ConnectionToClient currentClient = ((ConnectionToClient) clientThreadList[i]);
+            String currentClientUserId = currentClient.getInfo("userId").toString();
+            String currentClientRoom = currentClient.getInfo("room").toString();
+            
+            // if client[i] has the same room as sender then send the message
+            if(currentClientRoom.equals(senderRoom))
+            {
+                try{
+                    usersList.add(currentClientUserId);
+                }catch(Exception ex){
+                    
+                }
+            }
+        }
+        //build an envelope with Id of "who" and the Array<String> Users list
+        Envelope env = new Envelope("who",senderRoom,usersList);
+        try{
+            // send the envelope to the server
+            sender.sendToClient(env);
+        }catch(Exception ex){
+        }
+    }
+    
+    // this methods returns a list of connected users 
+    public String[] getAllUsersList(){
+        Thread[] clientThreadList = getClientConnections();
+        String[] usersList= new String []{};
+        // loop through all clients connections
+        for(int i = 0; i< clientThreadList.length; i++){
+            // get current client userId
+            ConnectionToClient currentClient = ((ConnectionToClient) clientThreadList[i]);
+            String currentClientUserId = currentClient.getInfo("userId").toString();
+            usersList = new String []{currentClientUserId};
+        }
+        return usersList;
+    }
+    /*
+    public void processTicTacToe(int gameState, String player1, String player2, TicTacToe ticTacToe, String activePlayer) {
+
+        // If GameState is 1 (invite)
+        if (gameState == 1) {
+            // Create an instance of the game to the userInfo for both players
+            player1.setInfo("ttt", ticTacToe);
+            player2.setInfo("ttt", ticTacToe);
+
+            // Send an envelope with the TicTacToe object to player 2
+            Envelope envelope = new Envelope("gameData", "ttt", ticTacToe);
+            player2.sendEnvelope(envelope);
+        }
+        // If GameState is 2 (decline)
+        else if (gameState == 2) {
+            // Send the envelope with the TicTacToe object to player 1
+            Envelope envelope = new Envelope("gameData", "ttt", ticTacToe);
+            player1.sendEnvelope(envelope);
+        }
+        // If GameState is 3 (playing)
+        else if (gameState == 3) {
+            // Save the instance of the game to the userInfo for both players
+            client.setInfo("ttt", ticTacToe);
+            player2.setInfo("ttt", ticTacToe);
+
+            // Swap the active player
+            activePlayer = (activePlayer.equals(player1.getUsername())) ? player2.getUsername() : player1.getUsername();
+
+            // Send the envelope with the TicTacToe object to the active player
+            Envelope envelope = new Envelope("gameData", "ttt", ticTacToe);
+            if (activePlayer.equals(player1.getUsername())) {
+                player1.sendEnvelope(envelope);
+            } else {
+                player2.sendEnvelope(envelope);
+            }
+        }
+        // If GameState is 4 (won)
+        else if (gameState == 4) {
+            // Swap the active player
+            activePlayer = (activePlayer.equals(player1.getUsername())) ? player2.getUsername() : player1.getUsername();
+
+            // Send an envelope with the TicTacToe object to the active player
+            Envelope envelope = new Envelope("gameData", "ttt", ticTacToe);
+            if (activePlayer.equals(player1.getUsername())) {
+                player1.sendEnvelope(envelope);
+            } else {
+                player2.sendEnvelope(envelope);
+            }
+        }
+    }*/
+    
+    public void handleCommandFromClient(Envelope env, ConnectionToClient client)
+    {
+        String id = env.getId();
+        
+        if(id.equals("login"))
+        {
+            //setInfo
+            client.setInfo("userId", env.getContents().toString());
+        }
+        // join command contains room contents
+        if(id.equals("join"))
+        {
+            client.setInfo("room", env.getContents().toString());
+        }
+        
+        // send message only to target whose userID == env.args
+        if(id.equals("pm"))
+        {
+            String message = env.getContents().toString();
+            String target = env.getArgs();
+            sendToAClient(message,client,target);
+        }
+        
+        if(id.equals("yell"))
+        {
+            String message = env.getContents().toString();
+            sendToAllClientsInAllRooms(message,client);
+        }
+        
+        // send back an envelope with an ArrayList<String> containing all members
+        // of the same room the sender is in
+        if(id.equals("who"))
+        {
+            String msgId = env.getId().toString();
+            SameRoomUsersList(msgId,client);
+        }
+    }
+    
+    
+
+    /**
+     * This method overrides the one in the superclass. Called when the server
+     * starts listening for connections.
+     */
+    protected void serverStarted() {
+        System.out.println("Server listening for connections on port " + getPort());
+    }
+
+    /**
+     * This method overrides the one in the superclass. Called when the server
+     * stops listening for connections.
+     */
+    protected void serverStopped() {
+        System.out.println("Server has stopped listening for connections.");
+    }
+
+    //Class methods ***************************************************
+    /**
+     * This method is responsible for the creation of the server instance (there
+     * is no UI in this phase).
+     *
+     * @param args[0] The port number to listen on. Defaults to 5555 if no
+     * argument is entered.
+     */
+    public static void main(String[] args) {
+        int port = 0; //Port to listen on
+
+        //port = DEFAULT_PORT; //Set port to 5555
+
+        // get the port number from the command line arguments
+        try{
+            port = Integer.parseInt(args[0]);
+            
+        }catch(ArrayIndexOutOfBoundsException aioobe){
+            port = DEFAULT_PORT;
+        }
+        
+        EchoServer sv = new EchoServer(port);
+
+        try {
+            sv.listen(); //Start listening for connections
+        } catch (Exception ex) {
+            System.out.println("ERROR - Could not listen for clients!");
+        }
+
+    }
+
+    protected void clientConnected(ConnectionToClient client) {
+
+        System.out.println("<Client Connected:" + client + ">");
+
+    }
+
+    //override client exception so that it only calls client disconnected on an IOException
+    synchronized protected void clientException(ConnectionToClient client, Throwable exception) {
+
+        if (exception instanceof IOException) {
+            clientDisconnected(client);
+        }
+    }
+
+    //overrides hook method to display message to console
+    synchronized protected void clientDisconnected(ConnectionToClient client) {
+
+        System.out.println("<Client Disconnected: " + client + ">");
+    }
+}
+//End of EchoServer class
