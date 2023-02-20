@@ -59,10 +59,24 @@ public class ChatClient extends AbstractClient {
             clientUI.display("List of users in the room: " + senderRoom);
             clientUI.display("_______________________________________");
             //loop through all the users list 
-            for(int i = 0; i<envContents.size();i++)
+            for(int i = 0; i < envContents.size(); i++)
             {
                 String currentUser = envContents.get(i);
                 clientUI.display(currentUser);
+            }
+        }
+        //if the envelope has an Id of “usersConnected”
+        if (env.getId().equals("usersConnected"))
+        {
+            // extract the arraylist from the envelope
+            ArrayList<String> envContents = new ArrayList<String>((ArrayList)env.getContents());
+            // add items to the JComboBox
+            // loop through all the users list 
+            for(int i = 0; i < envContents.size(); i++)
+            {
+                String currentUser = envContents.get(i);
+                
+                //clientUI.display(currentUser);
             }
         }
     }
@@ -219,9 +233,9 @@ public class ChatClient extends AbstractClient {
         
         //We want to send a #yell to all the rooms
         if (message.indexOf("#yell") >= 0) {
-            //#pm Adri this is my message
+            //#yell Hi this is my message
             
-            //user cannot send pm if they are not connected
+            //user cannot send yell if they are not connected
             if (!isConnected()) {
                 clientUI.display("Not connected. Could not send a yell");
             } else {
@@ -241,7 +255,7 @@ public class ChatClient extends AbstractClient {
             }
         }
         
-        if (message.indexOf("#who")>=0) {
+        if (message.indexOf("#who") >= 0) {
             //#who - command to returnn a list of users in the same room
             
             //user cannot send pm if they are not connected
@@ -260,7 +274,43 @@ public class ChatClient extends AbstractClient {
                 }
             }
         }
+        
+        if(message.indexOf("#usersConnected") >= 0){
+            // cannot send any message if not clients connected 
+            if (!isConnected()) {
+                clientUI.display("Not connected. Could not send a message");
+            } else {
+                try {
+                    //create a new envelope with the id of join and the contents of the room
+                    Envelope env = new Envelope("usersConnected","","");
+                    
+                    //send to the server
+                    sendToServer(env);
+                } catch (IOException e) {
+                    clientUI.display("failed to connect to server.");
+                }
+            }
+        }
+        
+        if(message.indexOf("#ttt") >= 0){
+            // cannot send any message if not clients connected 
+            if (!isConnected()) {
+                clientUI.display("Not connected. Could not send a message");
+            } else {
+                try {
+                    // get the TicTacToe Object
+                    Object tttObject = message.substring(4,message.length());
+                    //create a new envelope with the id of join and the contents of the room
+                    Envelope env = new Envelope("ttt","",tttObject);
+                    
+                    //send to the server
+                    sendToServer(env);
+                } catch (IOException e) {
+                    clientUI.display("failed to connect to server.");
+                }
+            }
+        }
     }
-
+    
 }
 //End of ChatClient class

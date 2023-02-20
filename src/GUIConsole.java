@@ -7,6 +7,7 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 /**
@@ -15,6 +16,9 @@ import java.io.IOException;
  */
 public class GUIConsole extends JFrame implements ChatIF{
     
+    final public static String host = "localhost";
+    String player1;
+    //int port = 5555;
     /**
      * The default port to listen on.
      */
@@ -23,12 +27,13 @@ public class GUIConsole extends JFrame implements ChatIF{
     
     // instance  - class properties
     ChatClient client;
+    EchoServer server;
     
     
     
     // buttons
     private JButton closeB = new JButton("Close");
-    private JButton openB = new JButton("Open");
+    private JButton openB = new JButton("Open Connection");
     private JButton sendB = new JButton("Send");
     private JButton quitB = new JButton("Quit");
     private JButton loginB = new JButton("Login");
@@ -52,25 +57,23 @@ public class GUIConsole extends JFrame implements ChatIF{
     // main chat area
     private JTextArea messageList = new JTextArea();
     
+    JComboBox<String> playersListCB = new JComboBox<>();
+    ArrayList<String> usersList;
 
 
     // constructor
     public  GUIConsole ( String host, int port) //call the class we are extending - Jframe for this class
     {
-        
         // set window properties
         super("Simple Chat GUI");
-        setSize(300, 400);
+        setSize(300, 500);
         
-        // combo box*************************** produce the Error Could not listen for clientes when create the EchoServer
-        /*EchoServer server = new EchoServer(5555);
-        String[] players = server.getAllUsersList();
-        JComboBox<String> playersListCB = new JComboBox<>(players);*/
 
         // creating a layout if the main window
         setLayout( new BorderLayout(5,5));
         JPanel bottom = new JPanel();
         add( "Center", messageList );
+        messageList.append(">> Open the connection");
         add( "South" , bottom);
 
         // layout of the bottom jframe
@@ -101,7 +104,35 @@ public class GUIConsole extends JFrame implements ChatIF{
         bottom.add(quitB);
         
         
-        // event Handler
+        // event Handler to open the connection
+        openB.addActionListener(new ActionListener()
+        {
+            public void actionPerformed (ActionEvent e)
+            {
+                // open the client connection
+                openConnection();    
+                messageList.append("\n>> Connection opened!\n");
+            }
+        });
+        
+        // event Handler to quit
+        quitB.addActionListener(new ActionListener ()
+        {
+            public void actionPerformed (ActionEvent e)
+            {
+                // if the client is not connected, quit. Else handle the command
+                if (client==null)
+                {
+                    System.exit(0);
+                    
+                }else{
+                    client.handleClientCommand("#quit");
+                }
+                
+            }
+        });
+
+        // event Handler to send messages
         sendB.addActionListener( new ActionListener() 
         {
             public void actionPerformed(ActionEvent e)
@@ -111,12 +142,24 @@ public class GUIConsole extends JFrame implements ChatIF{
             }
         });
         
+        // event Handler to login
         loginB.addActionListener( new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
                 // build a login command and send it to the server
                 client.handleMessageFromClientUI("#login "+loginTxF.getText());
+                
+                player1 = loginTxF.getText();
+                playersListCB.addItem(player1);
+                
+                if(client != null){
+                    // loop to update the Jombobox (Users Connected)
+                    //Envelope env = new Envelope();
+                    //usersList = (ArrayList)env.getContents();
+                    client.handleMessageFromClientUI("#usersConnected");
+                }
+                
                 // display a message for the user when is connected
                 send(" is connected!");
             }
@@ -124,6 +167,7 @@ public class GUIConsole extends JFrame implements ChatIF{
         });
         
         // event handler - create an instance of the Tic Tac Toe object
+        // and display the TicTacToe Board
         tictactoeB.addActionListener( new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
@@ -131,37 +175,50 @@ public class GUIConsole extends JFrame implements ChatIF{
                 // create an instance of the Tic Tac Toe object
                 // Initial state sets player 1 to the inviting player, player 2 is in the User List combo box.  **** 
                 // Active player is 2, game state is 1 (invite).  The board is empty.
-                /*
+                
                 char[][] emptyBoard = new char[3][3];
                 String player2;
-                player2 = getUserFromCB();
-                TicTacToe ttt = new TicTacToe("Inviting Player","player2",2,1,emptyBoard);
+                //player2 = getUserFromCB();
+                TicTacToe ttt = new TicTacToe(player1,"Pepe",2,1,emptyBoard);
                 // ============== Solve the user list combo box=========================
                 
                 //Display the TicTacToe board 
                 TTTBoardGUI tttB = new TTTBoardGUI();
-                tttB.setVisible(true);*/
+                tttB.setVisible(true);
+                
+                // send the tictactoe object to the server
+                client.handleMessageFromClientUI("#ttt " + ttt);
             }
 
         });
         
-        playersListCB.addActionListener(new ActionListener()
-        {
-            public void actionPerformed(ActionEvent e){
-                
-            }
-        });
-        
-        try {
+        // creates a new instance of ChatClient
+        /*try {
             client = new ChatClient(host, port, this);
+            
         } catch (IOException exception) {
             System.out.println("Error: Can't setup connection!!!!"
                     + " Terminating client.");
             System.exit(1);
-        }
+        }*/
+        
+        
+        /*EchoServer server = new EchoServer(5555);
+        String[] players = server.getAllUsersList();
+        playersListCB = new JComboBox<>(players);*/
+        
+        // event Handler to populate the combo box with the user's list
+        /*playersListCB.addActionListener(new ActionListener()
+        {
+            public void actionPerformed(ActionEvent e){
+                
+            }
+        });*/
         
         // make the window visible
         setVisible(true);
+        
+        
 
     }
     
@@ -176,9 +233,13 @@ public class GUIConsole extends JFrame implements ChatIF{
     }
     
     public static void main(String[] args){
+        //EchoServer server;
+        GUIConsole chat = new GUIConsole(host, DEFAULT_PORT);
         
-        GUIConsole chat = new GUIConsole("localhost", 5555);
+        
+        
     }
+    
     
     // gathers text fromm the messageTxf and sends it to the 
     // server via client.handleMessageFromClient
@@ -186,4 +247,33 @@ public class GUIConsole extends JFrame implements ChatIF{
 
         client.handleMessageFromClientUI(message);
     }
+
+    
+    // Update the combo box with the list of connected clients
+    public void updatePlayersList() {
+        
+        playersListCB.removeAllItems();
+        
+        server = new EchoServer(5555);
+        
+        //ArrayList<String> usersList = server.getAllUsersList();
+        
+        for (String clientName : usersList) {
+            playersListCB.addItem(clientName);
+        }
+    }
+    
+    // opens the client connection
+    public void openConnection(){
+        // creates a new instance of ChatClient
+        try {
+            client = new ChatClient(host, DEFAULT_PORT, this);
+            
+        } catch (IOException exception) {
+            System.out.println("Error: Can't setup connection!!!!"
+                    + " Terminating client.");
+            System.exit(1);
+        }
+    }
+
 }
