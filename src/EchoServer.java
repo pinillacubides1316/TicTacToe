@@ -174,11 +174,11 @@ public class EchoServer extends AbstractServer {
         }
     }
     
-    /*
+    
     public void processTicTacToe( Object msg, String player1, String player2, int activePlayer, int gameState, char[][] ticTacToeBoard, ConnectionToClient client ) {
 
         // If GameState is 1 (invite)
-        if (gameState == 1) {
+        /*if (gameState == 1) {
             // Create an instance of the game to the userInfo for both players
             player1.setInfo("ttt", ticTacToeBoard);
             player2.setInfo("ttt", ticTacToeBoard);
@@ -223,10 +223,30 @@ public class EchoServer extends AbstractServer {
             } else {
                 player2.sendEnvelope(envelope);
             }
-        }
-    }*/
+        }*/
+    }
     
-    // 
+    // add an instance of the game in the players
+    public void setPlayersTTT(String player1, String player2, TicTacToe ticTacToe){
+        Thread[] clientThreadList = getClientConnections();
+        
+        // loop through all clients connections
+        for(int i = 0; i < clientThreadList.length; i++){
+            // get current client userId and room
+            ConnectionToClient currentClient = ((ConnectionToClient) clientThreadList[i]);
+            String currentClientUserId = currentClient.getInfo("userId").toString();
+            
+            // if client[i] has the same room as sender then send the message
+            if(currentClientUserId.equals(player1) || currentClientUserId.equals(player2))
+            {
+                try{
+                    currentClient.setInfo("ttt", ticTacToe);
+                }catch(Exception ex){
+                    
+                }
+            }
+        }
+    }
     
     public void handleCommandFromClient(Envelope env, ConnectionToClient client)
     {
@@ -272,7 +292,7 @@ public class EchoServer extends AbstractServer {
             getAllUsersList(msgId,client);
         }
         
-        /*if(id.equals("ttt"))
+        if(id.equals("ttt"))
         {
             String msgId = env.getId().toString();
 
@@ -282,8 +302,8 @@ public class EchoServer extends AbstractServer {
             int activePlayer = ttt.getActivePlayer();
             int gameState = ttt.getGameState();
             char[][] board = ttt.getBoard();
-            processTicTacToe(msgId,player1, player2, activePlayer, gameState, board);
-        }*/
+            processTicTacToe(msgId,player1, player2, activePlayer, gameState, board, client);
+        }
     }
     
     

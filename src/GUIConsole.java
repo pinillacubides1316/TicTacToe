@@ -157,7 +157,7 @@ public class GUIConsole extends JFrame implements ChatIF{
                     // loop to update the Jombobox (Users Connected)
                     //Envelope env = new Envelope();
                     //usersList = (ArrayList)env.getContents();
-                    client.handleMessageFromClientUI("#usersConnected");
+                    //client.handleMessageFromClientUI("#usersConnected");
                 }
                 
                 // display a message for the user when is connected
@@ -172,22 +172,10 @@ public class GUIConsole extends JFrame implements ChatIF{
         {
             public void actionPerformed(ActionEvent e)
             {
-                // create an instance of the Tic Tac Toe object
-                // Initial state sets player 1 to the inviting player, player 2 is in the User List combo box.  **** 
-                // Active player is 2, game state is 1 (invite).  The board is empty.
-                
-                char[][] emptyBoard = new char[3][3];
-                String player2;
+                String player2 = "pp";
                 //player2 = getUserFromCB();
-                TicTacToe ttt = new TicTacToe(player1,"Pepe",2,1,emptyBoard);
-                // ============== Solve the user list combo box=========================
-                
-                //Display the TicTacToe board 
-                TTTBoardGUI tttB = new TTTBoardGUI();
-                tttB.setVisible(true);
-                
-                // send the tictactoe object to the server
-                client.handleMessageFromClientUI("#ttt " + ttt);
+                client.handleClientCommand("#ttt " + player1 + " " + player2);
+
             }
 
         });

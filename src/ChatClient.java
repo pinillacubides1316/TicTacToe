@@ -298,10 +298,24 @@ public class ChatClient extends AbstractClient {
                 clientUI.display("Not connected. Could not send a message");
             } else {
                 try {
-                    // get the TicTacToe Object
-                    Object tttObject = message.substring(4,message.length());
-                    //create a new envelope with the id of join and the contents of the room
-                    Envelope env = new Envelope("ttt","",tttObject);
+                    // get players 1 and 2
+                    String player1and2 = message.substring(4,message.length()).trim();
+                    String player1 = player1and2.substring(0,player1and2.indexOf(" ")).trim();
+                    String player2 = player1and2.substring(player1and2.indexOf(" "), player1and2.length()).trim();
+                    char[][] emptyBoard = new char[3][3];
+                
+                    // create an instance of the Tic Tac Toe object
+                    // Initial state sets player 1 to the inviting player, player 2 is in the User List combo box.  **** 
+                    // Active player is 2, game state is 1 (invite).  The board is empty.
+                    TicTacToe ttt = new TicTacToe(player1,player2,2,1,emptyBoard);
+                    // ============== Solve the user list combo box=========================
+
+                    //Display the TicTacToe board 
+                    TTTBoardGUI tttB = new TTTBoardGUI();
+                    tttB.setVisible(true);
+
+                    // create an envelope with the ttt object and send it to the server
+                    Envelope env = new Envelope("ttt","",ttt);
                     
                     //send to the server
                     sendToServer(env);
