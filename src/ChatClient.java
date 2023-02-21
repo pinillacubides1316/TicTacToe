@@ -79,6 +79,21 @@ public class ChatClient extends AbstractClient {
                 //clientUI.display(currentUser);
             }
         }
+        
+        // when client receives the ttt envelope command, unpack the tictactoe object
+        // and then call the processTicTacToe method
+        if(env.getId().equals("ttt"))
+        {
+            String msgId = env.getId();
+
+            TicTacToe ttt = (TicTacToe)env.getContents();
+            String player1 = ttt.getPlayer1();
+            String player2 = ttt.getPlayer2();
+            int activePlayer = ttt.getActivePlayer();
+            int gameState = ttt.getGameState();
+            char[][] board = ttt.getBoard();
+            processTicTacToe(msgId,player1, player2, activePlayer, gameState, board, ttt);
+        }
     }
 
     /**
@@ -324,7 +339,91 @@ public class ChatClient extends AbstractClient {
                 }
             }
         }
+        
+        if(message.equals("#tttDecline"))
+        {
+            // cannot send any message if not clients connected 
+            if (!isConnected()) {
+                clientUI.display("Not connected. Could not send a message");
+            }
+            else 
+            {
+                try 
+                {
+                    // ======= ? create ticTacToe instance ? ========
+
+                    // create an envelope with the ttt object and send it to the server
+                    Envelope env = new Envelope("tttDecline","","");
+
+                    sendToServer(env);
+                } 
+                catch (IOException e) 
+                {
+                    clientUI.display("failed to connect to server.");
+                }
+            } 
+        }
+        
+        if(message.equals("#tttAccept"))
+        {
+            // cannot send any message if not clients connected 
+            if (!isConnected()) {
+                clientUI.display("Not connected. Could not send a message");
+            } else {
+                
+                // display the board
+                
+                // send the accept command to the server
+                
+                
+            }
+        }
     }
+    
+    public void processTicTacToe(Object msg, String player1, String player2, 
+                                    int activePlayer, int gameState, char[][] ticTacToeBoard, 
+                                    TicTacToe ticTacToe){
+        
+        /*
+        // invite state
+        if(gameState == 1)
+        {
+            // display an invite message
+            clientUI.display("You have been invited to play TicTacToe with " +getPlayer1()+
+                    " #tttAccept to accept, #tttDecline to decline.");
+        }
+        
+        // decline state
+        else if(gameState == 2)
+        {
+            // display message that the game was declined
+            clientUI.display("Your game was declined.");
+            // hide the tictactoe board
+            ticTacToeBoard.setVisible(false);
+        }
+        
+        // playing state
+        else if(gameState == 3)
+        {
+            // display "your turn" message
+            clientUI.display("Your turn to play TicTacToe");
+            
+            // save the TicTacToe object to the TicTacToeConsole
+            
+            // use UpdateBoardMethod to adjust button text properties
+        }
+        
+        // win / lose state
+        else if(gameState == 4)
+        {
+            // display you lost message
+            clientUI.display("You have lost.");
+            // hide the board
+            ticTacToeBoard.setVisible(false);
+        }
+        */
+    }
+    
     
 }
 //End of ChatClient class

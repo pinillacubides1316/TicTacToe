@@ -333,6 +333,24 @@ public class EchoServer extends AbstractServer {
             char[][] board = ttt.getBoard();
             processTicTacToe(msgId,player1, player2, activePlayer, gameState, board, ttt, client);
         }
+        
+        if(id.equals("tttDecline"))
+        {
+            // extract TicTacToe object from userInfo
+            
+            // change TicTacToe object to gameState 2 (declined)
+            
+            // send object in envelope back to Player1
+        }
+        
+        if(id.equals("tttDecline"))
+        {
+            // extract TicTacToe object from userInfo
+            
+            // change TicTacToe object to gameState 3 (playing)
+            
+            // send object in envelope back to Player1
+        }
     }
     
     
