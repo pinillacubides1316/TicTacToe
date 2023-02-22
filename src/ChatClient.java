@@ -360,7 +360,7 @@ public class ChatClient extends AbstractClient {
                     TicTacToe ttt = new TicTacToe();
                     
                     // create an envelope with the ttt object and send it to the server
-                    Envelope env = new Envelope("tttDecline", "", ttt);
+                    Envelope env = new Envelope("tttDecline","", ttt);
 
                     // send the envelope to the server
                     sendToServer(env);
@@ -415,16 +415,29 @@ public class ChatClient extends AbstractClient {
         if(gameState == 1)
         {
             // display an invite message
-            clientUI.display("You have been invited to play TicTacToe with " +player1+
-                    " #tttAccept to accept, #tttDecline to decline.");
+            String message = ("You have been invited to \nplay TicTacToe with " +player1+" \n#tttAccept to accept, \n#tttDecline to decline.");
+            Envelope env = new Envelope("tttInvite",player2,message);
+            try{
+                //sendToServer(message);
+                sendToServer(env);
+            }catch(Exception e){
+                
+            }
         }
         
         // decline state
         else if(gameState == 2)
         {
             // display message that the game was declined
-            clientUI.display("Your game was declined.");
-            
+            String message = ("Your game was declined.");
+            Envelope env = new Envelope("tttDecline",player1,message);
+            //clientUI.display("Your game was declined.");
+            try{
+                //sendToServer(message);
+                sendToServer(env);
+            }catch(Exception e){
+                
+            }
             // hide the tictactoe board
             tttB.setVisible(false);
         }

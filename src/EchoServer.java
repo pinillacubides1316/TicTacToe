@@ -183,13 +183,13 @@ public class EchoServer extends AbstractServer {
             setPlayersToTTT(player1, player2, ticTacToe);
             
             // Send an envelope with the TicTacToe object to player 2
-            sendEnvToPlayer(player2,ticTacToe, client, "tttInvite");
+            sendEnvToPlayer(player2,ticTacToe, client, "ttt");
             
         }
         // If GameState is 2 (decline)
         else if (gameState == 2) {
             // Send the envelope with the TicTacToe object to player 1
-            sendEnvToPlayer(player1, ticTacToe, client, "tttDecline");
+            sendEnvToPlayer(player1, ticTacToe, client, "ttt");
         }
         // If GameState is 3 (playing)
         else if (gameState == 3) {
@@ -365,8 +365,10 @@ public class EchoServer extends AbstractServer {
         if(id.equals("tttDecline"))
         {
             // extract TicTacToe object from userInfo
-            String msgId = env.getId().toString();
-
+            String message = env.getContents().toString();
+            String target = env.getArgs().toString();
+            sendToAClient(message,client,target);
+            /*
             TicTacToe ttt = (TicTacToe)env.getContents();
             String player1 = ttt.getPlayer1();
             String player2 = ttt.getPlayer2();
@@ -377,11 +379,11 @@ public class EchoServer extends AbstractServer {
             ttt.setGameState(2);
             int gameState = ttt.getGameState();
             
-            processTicTacToe(msgId, player1, player2, activePlayer, gameState, board, ttt, client);
+            processTicTacToe(msgId, player1, player2, activePlayer, gameState, board, ttt, client);*/
         }
         
-        /*
-        if(id.equals("tttAccept"))
+        
+        /*if(id.equals("tttAccept"))
         {
             // extract TicTacToe object from userInfo
             
@@ -389,6 +391,15 @@ public class EchoServer extends AbstractServer {
             
             // send object in envelope back to Player1
         }*/
+        
+        if(id.equals("tttInvite"))
+        {
+            // send a message to the player 2
+            String message = env.getContents().toString();
+            String target = env.getArgs().toString();
+            sendToAClient(message,client,target);
+            
+        }
     }
     
     
