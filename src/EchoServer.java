@@ -189,7 +189,7 @@ public class EchoServer extends AbstractServer {
         // If GameState is 2 (decline)
         else if (gameState == 2) {
             // Send the envelope with the TicTacToe object to player 1
-            sendEnvToPlayer(player1,ticTacToe, client, "tttDecline");
+            sendEnvToPlayer(player1, ticTacToe, client, "tttDecline");
         }
         // If GameState is 3 (playing)
         else if (gameState == 3) {
@@ -249,7 +249,7 @@ public class EchoServer extends AbstractServer {
             if(currentClientUserId.equals(player2))
             {
                 try{
-                    Envelope env = new Envelope (id,"",ticTacToe);
+                    Envelope env = new Envelope(id,"",ticTacToe);
                     currentClient.sendToClient(env);
                 }catch(Exception ex){
                     
@@ -361,6 +361,34 @@ public class EchoServer extends AbstractServer {
             char[][] board = ttt.getBoard();
             processTicTacToe(msgId,player1, player2, activePlayer, gameState, board, ttt, client);
         }
+        
+        if(id.equals("tttDecline"))
+        {
+            // extract TicTacToe object from userInfo
+            String msgId = env.getId().toString();
+
+            TicTacToe ttt = (TicTacToe)env.getContents();
+            String player1 = ttt.getPlayer1();
+            String player2 = ttt.getPlayer2();
+            int activePlayer = ttt.getActivePlayer();
+            char[][] board = ttt.getBoard();
+            
+            // change TicTacToe object to gameState 2 (declined)
+            ttt.setGameState(2);
+            int gameState = ttt.getGameState();
+            
+            processTicTacToe(msgId, player1, player2, activePlayer, gameState, board, ttt, client);
+        }
+        
+        /*
+        if(id.equals("tttAccept"))
+        {
+            // extract TicTacToe object from userInfo
+            
+            // change TicTacToe object to gameState 3 (playing)
+            
+            // send object in envelope back to Player1
+        }*/
     }
     
     

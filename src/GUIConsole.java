@@ -192,7 +192,7 @@ public class GUIConsole extends JFrame implements ChatIF{
         
         
         /*EchoServer server = new EchoServer(5555);
-        String[] players = server.getAllUsersList();
+        String players = server.getAllUsersList();
         playersListCB = new JComboBox<>(players);*/
         
         // event Handler to populate the combo box with the user's list

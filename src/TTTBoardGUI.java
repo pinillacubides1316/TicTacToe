@@ -22,7 +22,7 @@ public class TTTBoardGUI extends JFrame{
         // Initialize the buttons
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
-                buttons[row][col] = new JButton("");
+                buttons[row][col] = new JButton("-");
                 panel.add(buttons[row][col]);
             }
         }
