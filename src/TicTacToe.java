@@ -32,9 +32,6 @@ public class TicTacToe implements Serializable{
         this.board = board;
     }
     
-
-    
-    
     // getters and setters
     public String getPlayer1() {
         return player1;

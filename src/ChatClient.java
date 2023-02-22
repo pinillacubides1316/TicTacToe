@@ -94,6 +94,12 @@ public class ChatClient extends AbstractClient {
             char[][] board = ttt.getBoard();
             processTicTacToe(msgId,player1, player2, activePlayer, gameState, board, ttt);
         }
+        
+        /*
+        if(env.getId().equals("tttDecline"))
+        {
+            
+        }*/
     }
 
     /**
@@ -350,11 +356,13 @@ public class ChatClient extends AbstractClient {
             {
                 try 
                 {
-                    // ======= ? create ticTacToe instance ? ========
-
+                    // create TicTacToe instance
+                    TicTacToe ttt = new TicTacToe();
+                    
                     // create an envelope with the ttt object and send it to the server
-                    Envelope env = new Envelope("tttDecline","","");
+                    Envelope env = new Envelope("tttDecline", "", ttt);
 
+                    // send the envelope to the server
                     sendToServer(env);
                 } 
                 catch (IOException e) 
@@ -366,17 +374,32 @@ public class ChatClient extends AbstractClient {
         
         if(message.equals("#tttAccept"))
         {
+            /*
             // cannot send any message if not clients connected 
             if (!isConnected()) {
                 clientUI.display("Not connected. Could not send a message");
             } else {
                 
-                // display the board
-                
-                // send the accept command to the server
-                
+                try{
+                    // create TicTacToe instance
+                    TicTacToe ttt = new TicTacToe();
+
+                    // display the board
+                    TTTBoardGUI tttB = new TTTBoardGUI();
+                    tttB.setVisible(true);
+
+                    // send the accept command to the server
+                    Envelope env = new Envelope("tttAccept", "", ttt);
+                    
+                    //send to the server
+                    sendToServer(env);
+                    
+                } catch (IOException e) {
+                    clientUI.display("failed to connect to server.");
+                }
                 
             }
+            */
         }
     }
     
@@ -384,12 +407,15 @@ public class ChatClient extends AbstractClient {
                                     int activePlayer, int gameState, char[][] ticTacToeBoard, 
                                     TicTacToe ticTacToe){
         
-        /*
+        // instance of the ticTacToe Board
+        TTTBoardGUI tttB = new TTTBoardGUI();
+       
+        
         // invite state
         if(gameState == 1)
         {
             // display an invite message
-            clientUI.display("You have been invited to play TicTacToe with " +getPlayer1()+
+            clientUI.display("You have been invited to play TicTacToe with " +player1+
                     " #tttAccept to accept, #tttDecline to decline.");
         }
         
@@ -398,8 +424,9 @@ public class ChatClient extends AbstractClient {
         {
             // display message that the game was declined
             clientUI.display("Your game was declined.");
+            
             // hide the tictactoe board
-            ticTacToeBoard.setVisible(false);
+            tttB.setVisible(false);
         }
         
         // playing state
@@ -418,10 +445,11 @@ public class ChatClient extends AbstractClient {
         {
             // display you lost message
             clientUI.display("You have lost.");
+            
             // hide the board
-            ticTacToeBoard.setVisible(false);
+            tttB.setVisible(false);
         }
-        */
+        
     }
     
     
