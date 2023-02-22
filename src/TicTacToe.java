@@ -1,4 +1,6 @@
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.Serializable;
 
 /*
@@ -78,9 +80,13 @@ public class TicTacToe implements Serializable{
         
     }
     
+    // move is 1 to 9 based on board square
     public void updateBoard(int move)
     {
-        // move is 1 to 9 based on board square
+//        switch(move){
+//            case 1: 
+//                board[0][0] = setBoard(1);
+//        }
+       
     }
-    
 }
