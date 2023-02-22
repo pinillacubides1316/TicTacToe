@@ -180,7 +180,7 @@ public class EchoServer extends AbstractServer {
         // If GameState is 1 (invite)
         if (gameState == 1) {
             // Create an instance of the game to the userInfo (eg. setInfo(“ttt”,ticTacToe) ) for both players;
-            createGameInstance(player1, player2, "ticTacToe");
+            setPlayersToTTT(player1, player2, ticTacToe);
             
             // Send an envelope with the TicTacToe object to player 2
             sendEnvToPlayer(player2,ticTacToe, client, "tttInvite");
@@ -196,43 +196,24 @@ public class EchoServer extends AbstractServer {
             // Save the instance of TicTacToe to the userInfo for both players
             setPlayersToTTT(player1, player2, ticTacToe);
             
-        }/*
+            // Swap the active player
+            swapActivePlayer(ticTacToe);
+            
+            // send the envelope with the TicTacToe object to the active player
+            sendEnvToActivePlayer(ticTacToe, client);
+            
+        }
         // If GameState is 4 (won)
         else if (gameState == 4) {
             // Swap the active player
-            activePlayer = (activePlayer.equals(player1.getUsername())) ? player2.getUsername() : player1.getUsername();
+            swapActivePlayer(ticTacToe);
 
             // Send an envelope with the TicTacToe object to the active player
-            Envelope envelope = new Envelope("gameData", "ttt", ticTacToeBoard);
-            if (activePlayer.equals(player1.getUsername())) {
-                player1.sendEnvelope(envelope);
-            } else {
-                player2.sendEnvelope(envelope);
-            }
-        }*/
-    }
-    
-    // create an instance of the game to the userInfo 
-    public void createGameInstance(String player1, String player2, String info){
-        Thread[] clientThreadList = getClientConnections();
-        
-        // loop through all clients connections
-        for(int i = 0; i < clientThreadList.length; i++){
-            // get current client userId and room
-            ConnectionToClient currentClient = ((ConnectionToClient) clientThreadList[i]);
-            String currentClientUserId = currentClient.getInfo("userId").toString();
-            
-            // if client[i] has the same room as sender then send the message
-            if(currentClientUserId.equals(player1) || currentClientUserId.equals(player2))
-            {
-                try{
-                    currentClient.setInfo("ttt", info);
-                }catch(Exception ex){
-                    
-                }
-            }
+            // send the envelope with the TicTacToe object to the active player
+            sendEnvToActivePlayer(ticTacToe, client);
         }
     }
+
     
     // add an instance of the game in the players
     public void setPlayersToTTT(String player1, String player2, TicTacToe ticTacToe){
@@ -269,6 +250,53 @@ public class EchoServer extends AbstractServer {
             {
                 try{
                     Envelope env = new Envelope (id,"",ticTacToe);
+                    currentClient.sendToClient(env);
+                }catch(Exception ex){
+                    
+                }
+            }
+        }
+    }
+    
+    // Swap the active player
+    public void swapActivePlayer(TicTacToe ticTacToe){
+        // get the active player
+        int activePlayer = ticTacToe.getActivePlayer();
+        if(activePlayer==1)
+        {
+            ticTacToe.setActivePlayer(2);
+        }else{
+            ticTacToe.setActivePlayer(1);
+        }
+        
+    }
+    
+    // send an envelope to the active player
+    public void sendEnvToActivePlayer(TicTacToe ticTacToe,ConnectionToClient client){
+        Thread[] clientThreadList = getClientConnections();
+        String player1 = ticTacToe.getPlayer1();
+        String player2 = ticTacToe.getPlayer2();
+        int activePlayer = ticTacToe.getActivePlayer();
+        String currentPlayer;
+        
+        // define who is the active player
+        if(activePlayer == 1)
+        {
+           currentPlayer = player1;
+        }else{
+            currentPlayer = player2;
+        }
+        // loop through all clients connections
+        for(int i = 0; i < clientThreadList.length; i++){
+            // get current client userId and room
+            ConnectionToClient currentClient = ((ConnectionToClient) clientThreadList[i]);
+            String currentClientUserId = currentClient.getInfo("userId").toString();
+            
+            // if client[i] is the active player, send an envelope with the ticTacToe Object
+            if(currentClientUserId.equals(currentPlayer))
+            {
+                try{
+                    Envelope env = new Envelope("tttMove","",ticTacToe);
                     currentClient.sendToClient(env);
                 }catch(Exception ex){
                     
