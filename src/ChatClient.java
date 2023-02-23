@@ -14,6 +14,9 @@ public class ChatClient extends AbstractClient {
      * method in the client.
      */
     ChatIF clientUI;
+    
+    // instance of TicTacToeGUI
+    TTTBoardGUI tttBoard;
 
     //Constructors ****************************************************
     /**
@@ -85,21 +88,29 @@ public class ChatClient extends AbstractClient {
         if(env.getId().equals("ttt"))
         {
             String msgId = env.getId();
-
             TicTacToe ttt = (TicTacToe)env.getContents();
-            String player1 = ttt.getPlayer1();
-            String player2 = ttt.getPlayer2();
-            int activePlayer = ttt.getActivePlayer();
-            int gameState = ttt.getGameState();
-            char[][] board = ttt.getBoard();
-            processTicTacToe(msgId,player1, player2, activePlayer, gameState, board, ttt);
+            processTicTacToe(ttt);
         }
         
-        /*
+        // id player 2 decline the invitation
         if(env.getId().equals("tttDecline"))
         {
+            // get the TicTacToe Object
+            TicTacToe ttt = (TicTacToe)env.getContents();
             
-        }*/
+            processTicTacToe(ttt);
+            
+        }
+        
+        // id player 2 Accepts the invitation
+        if(env.getId().equals("tttAccept"))
+        {
+            // get the TicTacToe Object
+            TicTacToe ttt = (TicTacToe)env.getContents();
+            
+            processTicTacToe(ttt);
+            
+        }
     }
 
     /**
@@ -313,7 +324,7 @@ public class ChatClient extends AbstractClient {
             }
         }
         
-        if(message.indexOf("#ttt") >= 0){
+        if(message.indexOf("#ttt ") >= 0){
             // cannot send any message if not clients connected 
             if (!isConnected()) {
                 clientUI.display("Not connected. Could not send a message");
@@ -321,7 +332,7 @@ public class ChatClient extends AbstractClient {
                 try {
                     // get players 1 and 2
                     String player1and2 = message.substring(4,message.length()).trim();
-                    String player1 = player1and2.substring(0,player1and2.indexOf(" ")).trim();
+                    String player1 = player1and2.substring(0, player1and2.indexOf(" "));
                     String player2 = player1and2.substring(player1and2.indexOf(" "), player1and2.length()).trim();
                     char[][] emptyBoard = new char[3][3];
                 
@@ -332,8 +343,9 @@ public class ChatClient extends AbstractClient {
                     // ============== Solve the user list combo box=========================
 
                     //Display the TicTacToe board 
-                    TTTBoardGUI tttB = new TTTBoardGUI();
-                    tttB.setVisible(true);
+                    //tttBoard = new TTTBoardGUI();
+                    //tttBoard.setVisible(true);
+                    //ticTacToeBoard(true);
 
                     // create an envelope with the ttt object and send it to the server
                     Envelope env = new Envelope("ttt","",ttt);
@@ -356,11 +368,8 @@ public class ChatClient extends AbstractClient {
             {
                 try 
                 {
-                    // create TicTacToe instance
-                    TicTacToe ttt = new TicTacToe();
-                    
                     // create an envelope with the ttt object and send it to the server
-                    Envelope env = new Envelope("tttDecline","", ttt);
+                    Envelope env = new Envelope("tttDecline","", "");
 
                     // send the envelope to the server
                     sendToServer(env);
@@ -374,22 +383,18 @@ public class ChatClient extends AbstractClient {
         
         if(message.equals("#tttAccept"))
         {
-            /*
             // cannot send any message if not clients connected 
             if (!isConnected()) {
                 clientUI.display("Not connected. Could not send a message");
             } else {
                 
                 try{
-                    // create TicTacToe instance
-                    TicTacToe ttt = new TicTacToe();
-
                     // display the board
                     TTTBoardGUI tttB = new TTTBoardGUI();
                     tttB.setVisible(true);
 
                     // send the accept command to the server
-                    Envelope env = new Envelope("tttAccept", "", ttt);
+                    Envelope env = new Envelope("tttAccept", "", "");
                     
                     //send to the server
                     sendToServer(env);
@@ -399,27 +404,30 @@ public class ChatClient extends AbstractClient {
                 }
                 
             }
-            */
         }
     }
     
-    public void processTicTacToe(Object msg, String player1, String player2, 
-                                    int activePlayer, int gameState, char[][] ticTacToeBoard, 
-                                    TicTacToe ticTacToe){
+    public void processTicTacToe(TicTacToe ttt){
         
-        // instance of the ticTacToe Board
-        TTTBoardGUI tttB = new TTTBoardGUI();
+        // extract all the attributes from TicTacToe
+        //TicTacToe ttt = (TicTacToe)env.getContents();
+        String player1 = ttt.getPlayer1();
+        String player2 = ttt.getPlayer2();
+        int activePlayer = ttt.getActivePlayer();
+        int gameState = ttt.getGameState();
+        char[][] board = ttt.getBoard();
        
         
         // invite state
         if(gameState == 1)
         {
             // display an invite message
-            String message = ("You have been invited to \nplay TicTacToe with " +player1+" \n#tttAccept to accept, \n#tttDecline to decline.");
-            Envelope env = new Envelope("tttInvite",player2,message);
+            clientUI.display("You have been invited to \nplay TicTacToe with " +player1+" \n#tttAccept to accept, \n#tttDecline to decline.");
+            //String message = ("You have been invited to \nplay TicTacToe with " +player1+" \n#tttAccept to accept, \n#tttDecline to decline.");
+            //env = new Envelope("tttInvite",player2,message);
             try{
                 //sendToServer(message);
-                sendToServer(env);
+                //sendToServer(env);
             }catch(Exception e){
                 
             }
@@ -429,17 +437,11 @@ public class ChatClient extends AbstractClient {
         else if(gameState == 2)
         {
             // display message that the game was declined
-            String message = ("Your game was declined.");
-            Envelope env = new Envelope("tttDecline",player1,message);
-            //clientUI.display("Your game was declined.");
-            try{
-                //sendToServer(message);
-                sendToServer(env);
-            }catch(Exception e){
-                
-            }
+            clientUI.display("Your game was declined.");
+            //String message = ("Your game was declined.");
+
             // hide the tictactoe board
-            tttB.setVisible(false);
+            //tttB.setVisible(false);
         }
         
         // playing state
@@ -448,9 +450,11 @@ public class ChatClient extends AbstractClient {
             // display "your turn" message
             clientUI.display("Your turn to play TicTacToe");
             
-            // save the TicTacToe object to the TicTacToeConsole
+            // save the TicTacToe object to the TicTacToeConsole??????????????
+            ttt = new TicTacToe(player1,player2,ttt.getActivePlayer(),ttt.getGameState(),ttt.getBoard());
             
-            // use UpdateBoardMethod to adjust button text properties
+            // use UpdateBoardMethod to adjust button text properties?????????????
+            ttt.updateBoard(1);
         }
         
         // win / lose state
@@ -460,7 +464,7 @@ public class ChatClient extends AbstractClient {
             clientUI.display("You have lost.");
             
             // hide the board
-            tttB.setVisible(false);
+            tttBoard.setVisible(false);
         }
         
     }

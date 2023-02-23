@@ -26,6 +26,11 @@ public class TicTacToe implements Serializable{
     public TicTacToe() {
     }
 
+    public TicTacToe(int gameState) {
+        this.gameState = gameState;
+    }
+    
+
     public TicTacToe(String player1, String player2, int activePlayer, int gameState, char[][] board) {
         this.player1 = player1;
         this.player2 = player2;

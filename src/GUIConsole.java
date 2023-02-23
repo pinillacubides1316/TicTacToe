@@ -174,6 +174,7 @@ public class GUIConsole extends JFrame implements ChatIF{
             {
                 String player2 = "pp";
                 //player2 = getUserFromCB();
+                
                 client.handleClientCommand("#ttt " + player1 + " " + player2);
 
             }
