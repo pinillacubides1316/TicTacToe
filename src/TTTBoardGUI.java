@@ -23,9 +23,8 @@ public class TTTBoardGUI extends JFrame{
         this.game = game;
     }
     
+    
     public TTTBoardGUI() {
-        super("Tic-Tac-Toe");
-
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(300, 300);
 
@@ -38,6 +37,7 @@ public class TTTBoardGUI extends JFrame{
         }
             
         add(panel);
+        
         //setVisible(true);
 
         // ======= button 1 ======= 
@@ -47,18 +47,26 @@ public class TTTBoardGUI extends JFrame{
             {
                 int activePlayer = game.getActivePlayer();
 
+                // if the active player is 1 place an X 
                 if(activePlayer == 1)
                 {
                     buttons[0][0].setText("X");
                 }
-                else if(activePlayer == 2)
+                // otherwise an “O”
+                else
                 {
                     buttons[0][0].setText("O");
                 }  
 
-                // put this for each button
+                // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 1;
                 game.updateBoard(move);
+                
+                // check if the move is a winning move
+                game.checkwin();
+                
+                // send the TicTacToe object to the server
+                
             }
         });
         
@@ -78,9 +86,12 @@ public class TTTBoardGUI extends JFrame{
                      buttons[0][1].setText("O");
                  }
 
-                // put this for each button
+                // update the Board with an "X" for player 1 or "O" for player 2
                  int move = 2;
                  game.updateBoard(move);
+                 
+                 // send the TicTacToe object to the server
+                 
             }
         });
         
@@ -100,7 +111,7 @@ public class TTTBoardGUI extends JFrame{
                     buttons[0][2].setText("O");
                 }
 
-                // put this for each button
+                // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 3;
                 game.updateBoard(move);
             }
@@ -122,7 +133,7 @@ public class TTTBoardGUI extends JFrame{
                     buttons[1][0].setText("O");
                 }
 
-                // put this for each button
+                // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 4;
                 game.updateBoard(move);
             }
@@ -144,7 +155,7 @@ public class TTTBoardGUI extends JFrame{
                     buttons[1][1].setText("O");
                 }
 
-                // put this for each button
+                // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 5;
                 game.updateBoard(move);
             }
@@ -166,7 +177,7 @@ public class TTTBoardGUI extends JFrame{
                     buttons[1][2].setText("O");
                 }
 
-                // put this for each button
+                // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 6;
                 game.updateBoard(move);
             }
@@ -187,7 +198,7 @@ public class TTTBoardGUI extends JFrame{
                     buttons[2][0].setText("O");
                 }
 
-                // put this for each button
+                // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 7;
                 game.updateBoard(move);
             }
@@ -209,7 +220,7 @@ public class TTTBoardGUI extends JFrame{
                     buttons[2][1].setText("O");
                 }
 
-                // put this for each button
+                // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 8;
                 game.updateBoard(move);
             }
@@ -231,7 +242,7 @@ public class TTTBoardGUI extends JFrame{
                     buttons[2][2].setText("O");
                 }
 
-                // put this for each button
+                // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 9;
                 game.updateBoard(move);
             }
