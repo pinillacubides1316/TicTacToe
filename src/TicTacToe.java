@@ -92,6 +92,18 @@ public class TicTacToe implements Serializable{
 //            case 1: 
 //                board[0][0] = setBoard(1);
 //        }
+        
+        /*for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                if (board[row][col] == TicTacToe.X) {
+                    board[row][col].setText("X");
+                } else if (board[row][col] == TicTacToe.O) {
+                    boardButtons[row][col].setText("O");
+                } else {
+                    boardButtons[row][col].setText("");
+                }
+            }
+        }*/
        
     }
 }

@@ -209,7 +209,7 @@ public class EchoServer extends AbstractServer {
             swapActivePlayer(ttt);
             
             // send the envelope with the TicTacToe object to the active player
-            sendEnvToActivePlayer(ttt, client);
+            sendEnvToActivePlayer("tttAccept",ttt, client);
             
         }
         // If GameState is 4 (won)
@@ -218,8 +218,7 @@ public class EchoServer extends AbstractServer {
             swapActivePlayer(ttt);
 
             // Send an envelope with the TicTacToe object to the active player
-            // send the envelope with the TicTacToe object to the active player
-            sendEnvToActivePlayer(ttt, client);
+            sendEnvToActivePlayer("tttLost",ttt, client);
         }
     }
 
@@ -284,7 +283,7 @@ public class EchoServer extends AbstractServer {
     }
     
     // send an envelope to the active player
-    public void sendEnvToActivePlayer(TicTacToe ticTacToe,ConnectionToClient client){
+    public void sendEnvToActivePlayer(String envId, TicTacToe ticTacToe,ConnectionToClient client){
         Thread[] clientThreadList = getClientConnections();
         String player1 = ticTacToe.getPlayer1();
         String player2 = ticTacToe.getPlayer2();
@@ -308,7 +307,7 @@ public class EchoServer extends AbstractServer {
             if(currentClientUserId.equals(currentPlayer))
             {
                 try{
-                    Envelope env = new Envelope("tttMove","",ticTacToe);
+                    Envelope env = new Envelope(envId,"",ticTacToe);
                     currentClient.sendToClient(env);
                 }catch(Exception ex){
                     

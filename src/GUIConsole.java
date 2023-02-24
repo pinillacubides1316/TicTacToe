@@ -17,8 +17,8 @@ import java.util.ArrayList;
 public class GUIConsole extends JFrame implements ChatIF{
     
     final public static String host = "localhost";
+    // define the player 1
     String player1;
-    //int port = 5555;
     /**
      * The default port to listen on.
      */
@@ -28,7 +28,6 @@ public class GUIConsole extends JFrame implements ChatIF{
     // instance  - class properties
     ChatClient client;
     EchoServer server;
-    
     
     
     // buttons
@@ -155,9 +154,7 @@ public class GUIConsole extends JFrame implements ChatIF{
                 
                 if(client != null){
                     // loop to update the Jombobox (Users Connected)
-                    //Envelope env = new Envelope();
-                    //usersList = (ArrayList)env.getContents();
-                    //client.handleMessageFromClientUI("#usersConnected");
+                    client.handleMessageFromClientUI("#usersConnected");
                 }
                 
                 // display a message for the user when is connected
@@ -181,17 +178,6 @@ public class GUIConsole extends JFrame implements ChatIF{
 
         });
         
-        // creates a new instance of ChatClient
-        /*try {
-            client = new ChatClient(host, port, this);
-            
-        } catch (IOException exception) {
-            System.out.println("Error: Can't setup connection!!!!"
-                    + " Terminating client.");
-            System.exit(1);
-        }*/
-        
-        
         /*EchoServer server = new EchoServer(5555);
         String players = server.getAllUsersList();
         playersListCB = new JComboBox<>(players);*/
@@ -206,8 +192,6 @@ public class GUIConsole extends JFrame implements ChatIF{
         
         // make the window visible
         setVisible(true);
-        
-        
 
     }
     
@@ -223,9 +207,7 @@ public class GUIConsole extends JFrame implements ChatIF{
     
     public static void main(String[] args){
         //EchoServer server;
-        GUIConsole chat = new GUIConsole(host, DEFAULT_PORT);
-        
-        
+        GUIConsole chat = new GUIConsole(host, DEFAULT_PORT); 
         
     }
     
@@ -264,5 +246,4 @@ public class GUIConsole extends JFrame implements ChatIF{
             System.exit(1);
         }
     }
-
 }

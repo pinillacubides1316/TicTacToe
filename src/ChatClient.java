@@ -69,7 +69,7 @@ public class ChatClient extends AbstractClient {
             }
         }
         //if the envelope has an Id of “usersConnected”
-        if (env.getId().equals("usersConnected"))
+        /*if (env.getId().equals("usersConnected"))
         {
             // extract the arraylist from the envelope
             ArrayList<String> envContents = new ArrayList<String>((ArrayList)env.getContents());
@@ -81,7 +81,7 @@ public class ChatClient extends AbstractClient {
                 
                 //clientUI.display(currentUser);
             }
-        }
+        }*/
         
         // when client receives the ttt envelope command, unpack the tictactoe object
         // and then call the processTicTacToe method
@@ -343,9 +343,8 @@ public class ChatClient extends AbstractClient {
                     // ============== Solve the user list combo box=========================
 
                     //Display the TicTacToe board 
-                    //tttBoard = new TTTBoardGUI();
-                    //tttBoard.setVisible(true);
-                    //ticTacToeBoard(true);
+                    tttBoard = new TTTBoardGUI();
+                    tttBoard.setVisible(true);
 
                     // create an envelope with the ttt object and send it to the server
                     Envelope env = new Envelope("ttt","",ttt);
@@ -390,8 +389,8 @@ public class ChatClient extends AbstractClient {
                 
                 try{
                     // display the board
-                    TTTBoardGUI tttB = new TTTBoardGUI();
-                    tttB.setVisible(true);
+                    tttBoard = new TTTBoardGUI();
+                    tttBoard.setVisible(true);
 
                     // send the accept command to the server
                     Envelope env = new Envelope("tttAccept", "", "");
@@ -416,21 +415,12 @@ public class ChatClient extends AbstractClient {
         int activePlayer = ttt.getActivePlayer();
         int gameState = ttt.getGameState();
         char[][] board = ttt.getBoard();
-       
         
         // invite state
         if(gameState == 1)
         {
             // display an invite message
             clientUI.display("You have been invited to \nplay TicTacToe with " +player1+" \n#tttAccept to accept, \n#tttDecline to decline.");
-            //String message = ("You have been invited to \nplay TicTacToe with " +player1+" \n#tttAccept to accept, \n#tttDecline to decline.");
-            //env = new Envelope("tttInvite",player2,message);
-            try{
-                //sendToServer(message);
-                //sendToServer(env);
-            }catch(Exception e){
-                
-            }
         }
         
         // decline state
@@ -438,10 +428,12 @@ public class ChatClient extends AbstractClient {
         {
             // display message that the game was declined
             clientUI.display("Your game was declined.");
-            //String message = ("Your game was declined.");
 
             // hide the tictactoe board
-            //tttB.setVisible(false);
+            if(tttBoard.isVisible())
+            {
+                tttBoard.setVisible(false);
+            }
         }
         
         // playing state
@@ -450,8 +442,9 @@ public class ChatClient extends AbstractClient {
             // display "your turn" message
             clientUI.display("Your turn to play TicTacToe");
             
-            // save the TicTacToe object to the TicTacToeConsole??????????????
-            ttt = new TicTacToe(player1,player2,ttt.getActivePlayer(),ttt.getGameState(),ttt.getBoard());
+            // save the TicTacToe object to the TicTacToeConsole
+            ttt = new TicTacToe(player1,player2,activePlayer,gameState,board);
+            tttBoard.saveGame(ttt);
             
             // use UpdateBoardMethod to adjust button text properties?????????????
             ttt.updateBoard(1);
