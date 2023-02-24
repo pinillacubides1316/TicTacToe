@@ -12,6 +12,9 @@ import java.awt.event.ActionListener;
  * @author adria
  */
 public class TTTBoardGUI extends JFrame{
+    // instance  - class properties
+    ChatClient client;
+    
     JButton[][] buttons = new JButton[3][3];
     JPanel panel = new JPanel(new GridLayout(3, 3));
     
@@ -25,6 +28,7 @@ public class TTTBoardGUI extends JFrame{
     
     
     public TTTBoardGUI() {
+        super("Tic-Tac-Toe");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(300, 300);
 
@@ -37,8 +41,6 @@ public class TTTBoardGUI extends JFrame{
         }
             
         add(panel);
-        
-        //setVisible(true);
 
         // ======= button 1 ======= 
         buttons[0][0].addActionListener(new ActionListener (){
@@ -64,9 +66,13 @@ public class TTTBoardGUI extends JFrame{
                 
                 // check if the move is a winning move
                 game.checkwin();
-                
+
                 // send the TicTacToe object to the server
-                
+                /*try{
+                    client.sendToServer(game);
+                }catch(Exception ex){
+                    
+                }*/
             }
         });
         

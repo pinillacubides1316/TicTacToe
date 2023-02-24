@@ -69,7 +69,7 @@ public class ChatClient extends AbstractClient {
             }
         }
         //if the envelope has an Id of “usersConnected”
-        /*if (env.getId().equals("usersConnected"))
+        if (env.getId().equals("usersConnected"))
         {
             // extract the arraylist from the envelope
             ArrayList<String> envContents = new ArrayList<String>((ArrayList)env.getContents());
@@ -78,10 +78,9 @@ public class ChatClient extends AbstractClient {
             for(int i = 0; i < envContents.size(); i++)
             {
                 String currentUser = envContents.get(i);
-                
                 //clientUI.display(currentUser);
             }
-        }*/
+        }
         
         // when client receives the ttt envelope command, unpack the tictactoe object
         // and then call the processTicTacToe method
@@ -406,6 +405,7 @@ public class ChatClient extends AbstractClient {
         }
     }
     
+    // process the TicTacToe Object based on the gameState
     public void processTicTacToe(TicTacToe ttt){
         
         // extract all the attributes from TicTacToe

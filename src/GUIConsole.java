@@ -28,7 +28,7 @@ public class GUIConsole extends JFrame implements ChatIF{
     // instance  - class properties
     ChatClient client;
     EchoServer server;
-    
+
     
     // buttons
     private JButton closeB = new JButton("Close");
@@ -56,12 +56,11 @@ public class GUIConsole extends JFrame implements ChatIF{
     // main chat area
     private JTextArea messageList = new JTextArea();
     
-    JComboBox<String> playersListCB = new JComboBox<>();
+    private JComboBox<String> usersListCB = new JComboBox<>();
     ArrayList<String> usersList;
 
-
     // constructor
-    public  GUIConsole ( String host, int port) //call the class we are extending - Jframe for this class
+    public GUIConsole ( String host, int port) //call the class we are extending - Jframe for this class
     {
         // set window properties
         super("Simple Chat GUI");
@@ -93,7 +92,7 @@ public class GUIConsole extends JFrame implements ChatIF{
         bottom.add(messageTxF);
         
         bottom.add(userListLB);
-        bottom.add(playersListCB);
+        bottom.add(usersListCB);
                 
         bottom.add(openB); 
         bottom.add(sendB);
@@ -150,7 +149,7 @@ public class GUIConsole extends JFrame implements ChatIF{
                 client.handleMessageFromClientUI("#login "+loginTxF.getText());
                 
                 player1 = loginTxF.getText();
-                playersListCB.addItem(player1);
+                //playersListCB.addItem(player1);
                 
                 if(client != null){
                     // loop to update the Jombobox (Users Connected)
@@ -217,21 +216,6 @@ public class GUIConsole extends JFrame implements ChatIF{
     public void send(String message){
 
         client.handleMessageFromClientUI(message);
-    }
-
-    
-    // Update the combo box with the list of connected clients
-    public void updatePlayersList() {
-        
-        playersListCB.removeAllItems();
-        
-        server = new EchoServer(5555);
-        
-        //ArrayList<String> usersList = server.getAllUsersList();
-        
-        for (String clientName : usersList) {
-            playersListCB.addItem(clientName);
-        }
     }
     
     // opens the client connection
