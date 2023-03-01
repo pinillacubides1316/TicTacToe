@@ -20,10 +20,19 @@ public class TTTBoardGUI extends JFrame{
     
     // instance of TicTacToe
     private TicTacToe game;
-
+    
     // save the TicTacToe object to the TicTacToeConsole
     public void saveGame(TicTacToe game) {
         this.game = game;
+    }
+    
+    public TicTacToe getGame() {
+        return game;
+    }
+    
+    // save the client object to be able to access to it
+    public void saveClient(ChatClient client) {
+        this.client = client;
     }
     
     
@@ -42,37 +51,30 @@ public class TTTBoardGUI extends JFrame{
             
         add(panel);
 
+
         // ======= button 1 ======= 
         buttons[0][0].addActionListener(new ActionListener (){
 
             public void actionPerformed (ActionEvent e)
             {
-                int activePlayer = game.getActivePlayer();
-
-                // if the active player is 1 place an X 
-                if(activePlayer == 1)
-                {
-                    buttons[0][0].setText("X");
-                }
-                // otherwise an “O”
-                else
-                {
-                    buttons[0][0].setText("O");
-                }  
-
                 // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 1;
-                game.updateBoard(move);
                 
+                // set the text in the button according to the player
+                updateBoardText(0,0);
+                
+                // update the board[][]
+                game.updateBoard(move);
+
                 // check if the move is a winning move
                 game.checkwin();
 
                 // send the TicTacToe object to the server
-                /*try{
-                    client.sendToServer(game);
-                }catch(Exception ex){
-                    
-                }*/
+                if(client.isConnected())
+                {
+                    //client.sendToServer(env); // client is null *******
+                    client.handleMessageFromClientUI("#tttPlaying");
+                }
             }
         });
         
@@ -83,20 +85,24 @@ public class TTTBoardGUI extends JFrame{
             {
                 int activePlayer = game.getActivePlayer();
 
-                if(activePlayer == 1)
-                 {
-                     buttons[0][1].setText("X");
-                 }
-                 else if(activePlayer == 2)
-                 {
-                     buttons[0][1].setText("O");
-                 }
-
                 // update the Board with an "X" for player 1 or "O" for player 2
                  int move = 2;
-                 game.updateBoard(move);
+                
+                // set the text in the button according to the player
+                updateBoardText(0,1);
+                
+                // update the board[][]
+                game.updateBoard(move);
                  
-                 // send the TicTacToe object to the server
+                // check if the move is a winning move
+                game.checkwin();
+
+                // send the TicTacToe object to the server
+                if(client.isConnected())
+                {
+                    //client.sendToServer(env); // client is null *******
+                    client.handleMessageFromClientUI("#tttPlaying");
+                }
                  
             }
         });
@@ -108,18 +114,24 @@ public class TTTBoardGUI extends JFrame{
             {
                 int activePlayer = game.getActivePlayer();
 
-                if(activePlayer == 1)
-                {
-                    buttons[0][2].setText("X");
-                }
-                else if(activePlayer == 2)
-                {
-                    buttons[0][2].setText("O");
-                }
-
                 // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 3;
+                
+                // set the text in the button according to the player
+                updateBoardText(0,2);
+                
+                // update the board[][]
                 game.updateBoard(move);
+                
+                // check if the move is a winning move
+                game.checkwin();
+
+                // send the TicTacToe object to the server
+                if(client.isConnected())
+                {
+                    //client.sendToServer(env); // client is null *******
+                    client.handleMessageFromClientUI("#tttPlaying");
+                }
             }
         });
         
@@ -130,18 +142,24 @@ public class TTTBoardGUI extends JFrame{
             {
                 int activePlayer = game.getActivePlayer();
 
-                if(activePlayer == 1)
-                {
-                    buttons[1][0].setText("X");
-                }
-                else if(activePlayer == 2)
-                {
-                    buttons[1][0].setText("O");
-                }
-
                 // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 4;
+                
+                // set the text in the button according to the player
+                updateBoardText(1,0);
+                
+                // update the board[][]
                 game.updateBoard(move);
+                
+                // check if the move is a winning move
+                game.checkwin();
+
+                // send the TicTacToe object to the server
+                if(client.isConnected())
+                {
+                    //client.sendToServer(env); // client is null *******
+                    client.handleMessageFromClientUI("#tttPlaying");
+                }
             }
         });
         
@@ -152,18 +170,24 @@ public class TTTBoardGUI extends JFrame{
             {
                 int activePlayer = game.getActivePlayer();
 
-                if(activePlayer == 1)
-                {
-                    buttons[1][1].setText("X");
-                }
-                else if(activePlayer == 2)
-                {
-                    buttons[1][1].setText("O");
-                }
-
                 // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 5;
+                
+                // set the text in the button according to the player
+                updateBoardText(1,1);
+                
+                // update the board[][]
                 game.updateBoard(move);
+                
+                // check if the move is a winning move
+                game.checkwin();
+
+                // send the TicTacToe object to the server
+                if(client.isConnected())
+                {
+                    //client.sendToServer(env); // client is null *******
+                    client.handleMessageFromClientUI("#tttPlaying");
+                }
             }
         });
         
@@ -174,18 +198,24 @@ public class TTTBoardGUI extends JFrame{
             {
                 int activePlayer = game.getActivePlayer();
 
-                if(activePlayer == 1)
-                {
-                    buttons[1][2].setText("X");
-                }
-                else if(activePlayer == 2)
-                {
-                    buttons[1][2].setText("O");
-                }
-
                 // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 6;
+                
+                // set the text in the button according to the player
+                updateBoardText(1,2);
+                
+                // update the board[][]
                 game.updateBoard(move);
+                
+                // check if the move is a winning move
+                game.checkwin();
+
+                // send the TicTacToe object to the server
+                if(client.isConnected())
+                {
+                    //client.sendToServer(env); // client is null *******
+                    client.handleMessageFromClientUI("#tttPlaying");
+                }
             }
         });
         
@@ -195,18 +225,24 @@ public class TTTBoardGUI extends JFrame{
             {
                 int activePlayer = game.getActivePlayer();
 
-                if(activePlayer == 1)
-                {
-                    buttons[2][0].setText("X");
-                }
-                else if(activePlayer == 2)
-                {
-                    buttons[2][0].setText("O");
-                }
-
                 // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 7;
+                
+                // set the text in the button according to the player
+                updateBoardText(2,0);
+                
+                // update the board[][]
                 game.updateBoard(move);
+                
+                // check if the move is a winning move
+                game.checkwin();
+
+                // send the TicTacToe object to the server
+                if(client.isConnected())
+                {
+                    //client.sendToServer(env); // client is null *******
+                    client.handleMessageFromClientUI("#tttPlaying");
+                }
             }
         });
         
@@ -217,18 +253,24 @@ public class TTTBoardGUI extends JFrame{
             {
                 int activePlayer = game.getActivePlayer();
 
-                if(activePlayer == 1)
-                {
-                    buttons[2][1].setText("X");
-                }
-                else if(activePlayer == 2)
-                {
-                    buttons[2][1].setText("O");
-                }
-
                 // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 8;
+                
+                // set the text in the button according to the player
+                updateBoardText(2,1);
+                
+                // update the board[][]
                 game.updateBoard(move);
+                
+                // check if the move is a winning move
+                game.checkwin();
+
+                // send the TicTacToe object to the server
+                if(client.isConnected())
+                {
+                    //client.sendToServer(env); // client is null *******
+                    client.handleMessageFromClientUI("#tttPlaying");
+                }
             }
         });
         
@@ -239,25 +281,37 @@ public class TTTBoardGUI extends JFrame{
             {
                 int activePlayer = game.getActivePlayer();
 
-                if(activePlayer == 1)
-                {
-                    buttons[2][2].setText("X");
-                }
-                else if(activePlayer == 2)
-                {
-                    buttons[2][2].setText("O");
-                }
-
                 // update the Board with an "X" for player 1 or "O" for player 2
                 int move = 9;
+                
+                // set the text in the button according to the player
+                updateBoardText(2,2);
+                
+                // update the board[][]
                 game.updateBoard(move);
+                
+                // check if the move is a winning move
+                game.checkwin();
+
+                // send the TicTacToe object to the server
+                if(client.isConnected())
+                {
+                    //client.sendToServer(env); // client is null *******
+                    client.handleMessageFromClientUI("#tttPlaying");
+                }
             }
         }); 
     }
     
-    
-    /*
-    public static void main(String[] args) {
-        new TTTBoardGUI();    
-    }*/
+    // set the text according to the player
+    public void updateBoardText(int row, int col)
+    {
+        if(game.getActivePlayer()==1){
+            buttons[row][col].setText("X");
+        }else{
+            buttons[row][col].setText("O");
+        }
+        
+    }
+
 }

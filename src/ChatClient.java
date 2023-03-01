@@ -17,6 +17,27 @@ public class ChatClient extends AbstractClient {
     
     // instance of TicTacToeGUI
     TTTBoardGUI tttBoard;
+    
+    // instance of GUIConsole
+    GUIConsole gc;
+
+    
+    // save the GUIConsole object to be able to access the ComboBox
+    public void saveGUIConsole(GUIConsole gc) {
+        this.gc = gc;
+    }
+    
+    // save the TTTBoard object to be able to access the TicTacToe Object saved there
+    public void saveTTTBoard(TTTBoardGUI tttBoard) {
+        this.tttBoard = tttBoard;
+    }
+    
+    // getter for the tic tac toe Board
+    public TTTBoardGUI getTTTBoard() {
+        return tttBoard;
+    }
+    
+    
 
     //Constructors ****************************************************
     /**
@@ -31,7 +52,10 @@ public class ChatClient extends AbstractClient {
         super(host, port); //Call the superclass constructor
         this.clientUI = clientUI;
         //openConnection();
+        
     }
+    
+    
 
     //Instance methods ************************************************
     /**
@@ -43,14 +67,14 @@ public class ChatClient extends AbstractClient {
         // if the message from the server is an Envelope 
         if(msg instanceof Envelope){
             // sends them to a handle server command method
-            HandleCommandFromServer((Envelope)msg);
+            handleCommandFromServer((Envelope)msg);
         }else{
             clientUI.display(msg.toString());
         }
     }
     
     //Handle the commands from server
-    public void HandleCommandFromServer(Envelope env){
+    public void handleCommandFromServer(Envelope env){
         //if the envelope has an Id of “who”
         if (env.getId().equals("who"))
         {
@@ -73,12 +97,16 @@ public class ChatClient extends AbstractClient {
         {
             // extract the arraylist from the envelope
             ArrayList<String> envContents = new ArrayList<String>((ArrayList)env.getContents());
+            
+            // remove all the current items from ComboBox
+            gc.usersListCB.removeAllItems();
+            
             // add items to the JComboBox
             // loop through all the users list 
             for(int i = 0; i < envContents.size(); i++)
             {
                 String currentUser = envContents.get(i);
-                //clientUI.display(currentUser);
+                gc.usersListCB.addItem(currentUser);
             }
         }
         
@@ -91,25 +119,6 @@ public class ChatClient extends AbstractClient {
             processTicTacToe(ttt);
         }
         
-        // id player 2 decline the invitation
-        if(env.getId().equals("tttDecline"))
-        {
-            // get the TicTacToe Object
-            TicTacToe ttt = (TicTacToe)env.getContents();
-            
-            processTicTacToe(ttt);
-            
-        }
-        
-        // id player 2 Accepts the invitation
-        if(env.getId().equals("tttAccept"))
-        {
-            // get the TicTacToe Object
-            TicTacToe ttt = (TicTacToe)env.getContents();
-            
-            processTicTacToe(ttt);
-            
-        }
     }
 
     /**
@@ -341,9 +350,12 @@ public class ChatClient extends AbstractClient {
                     TicTacToe ttt = new TicTacToe(player1,player2,2,1,emptyBoard);
                     // ============== Solve the user list combo box=========================
 
-                    //Display the TicTacToe board 
+                    // display the TicTacToe board 
                     tttBoard = new TTTBoardGUI();
                     tttBoard.setVisible(true);
+                    
+                    // save the TicTacTocGUI instance
+                    saveTTTBoard(tttBoard);
 
                     // create an envelope with the ttt object and send it to the server
                     Envelope env = new Envelope("ttt","",ttt);
@@ -387,12 +399,44 @@ public class ChatClient extends AbstractClient {
             } else {
                 
                 try{
-                    // display the board
+                    // display the TicTacToe board
                     tttBoard = new TTTBoardGUI();
                     tttBoard.setVisible(true);
+                    
+                    tttBoard.client = this;
 
                     // send the accept command to the server
                     Envelope env = new Envelope("tttAccept", "", "");
+                    
+                    //send to the server
+                    sendToServer(env);
+                    
+                } catch (IOException e) {
+                    clientUI.display("failed to connect to server.");
+                }
+                
+            }
+        }
+        
+        if(message.equals("#tttPlaying"))
+        {
+            // cannot send any message if not clients connected 
+            if (!isConnected()) {
+                clientUI.display("Not connected. Could not send a message");
+            } else {
+                
+                try{
+                    // get the ttt Object
+                    TicTacToe ttt = tttBoard.getGame();
+                    
+                    String player1 = ttt.getPlayer1();
+                    String player2 = ttt.getPlayer2();
+                    int activePlayer = ttt.getActivePlayer();
+                    int gameState = ttt.getGameState();
+                    char[][] board = ttt.getBoard();
+                    char pos = board[0][0];
+                    // send the ttt command to the server with the ttt Object
+                    Envelope env = new Envelope("ttt", "", ttt);
                     
                     //send to the server
                     sendToServer(env);
@@ -447,7 +491,7 @@ public class ChatClient extends AbstractClient {
             tttBoard.saveGame(ttt);
             
             // use UpdateBoardMethod to adjust button text properties?????????????
-            ttt.updateBoard(1);
+            updateBoard(ttt);
         }
         
         // win / lose state
@@ -462,6 +506,18 @@ public class ChatClient extends AbstractClient {
         
     }
     
-    
+    public void updateBoard(TicTacToe ttt){
+        int move = 1;
+        char[][] board = ttt.getBoard();
+        for(int i = 0; i < 3; i++)
+        {
+            for(int j = 0; j < 3; j++)
+            {
+                String symbol = Character.toString(board[i][j]);
+                tttBoard.buttons[i][j].setText(symbol);
+            }
+        }
+    }
+
 }
 //End of ChatClient class

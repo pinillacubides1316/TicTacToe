@@ -15,14 +15,13 @@ import java.io.Serializable;
 public class TicTacToe implements Serializable{
     
     // declare variables
-    String player1;
-    String player2;
-    int activePlayer;
-    int gameState;
-    char[][] board;
-
-    // constructor
-
+    private String player1;
+    private String player2;
+    private int activePlayer;
+    private int gameState;
+    private char[][] board;
+    
+    // constructors
     public TicTacToe() {
     }
 
@@ -83,10 +82,16 @@ public class TicTacToe implements Serializable{
     // check if the move is a winning move 
     public void checkwin()
     {
+        char player1 = 'X';
+        char player2 = 'O';
+        
         // Check rows
         for (int i = 0; i < 3; i++) {
-            if (board[i][0] == board[i][1] && board[i][1] == board[i][2]) {
-                
+            if ( board[i][0] == player1 && board[i][1] == player1 && board[i][2] == player1 ) { 
+                //change the gamestate to 4 (won)
+                setGameState(4);
+            }
+            if( board[i][0] == player2 && board[i][1] == player2 && board[i][2] == player2){
                 //change the gamestate to 4 (won)
                 setGameState(4);
             }
@@ -94,21 +99,30 @@ public class TicTacToe implements Serializable{
 
         // Check columns
         for (int j = 0; j < 3; j++) {
-            if (board[0][j] == board[1][j] && board[1][j] == board[2][j]) {
-                
+            if ( board[0][j] == player1 && board[1][j] == player1 && board[1][j] == player1 ) { 
+                //change the gamestate to 4 (won)
+                setGameState(4);
+            }
+            if( board[0][j] == player2 && board[1][j] == player2 && board[1][j] == player2 ){
                 //change the gamestate to 4 (won)
                 setGameState(4);
             }
         }
 
         // Check diagonals
-        if (board[0][0] == board[1][1] && board[1][1] == board[2][2]) {
-            
+        if (board[0][0] == player1 && board[1][1] == player1 && board[2][2] == player1 ) {
             //change the gamestate to 4 (won)
             setGameState(4);
         }
-        if (board[0][2] == board[1][1] && board[1][1] == board[2][0]) {
-            
+        if (board[0][0] == player2 && board[1][1] == player2 && board[2][2] == player2){
+            //change the gamestate to 4 (won)
+            setGameState(4);
+        }
+        if (board[0][2] == player1 && board[1][1] == player1 && board[2][0] == player1) {
+            //change the gamestate to 4 (won)
+            setGameState(4);
+        }
+        if (board[0][2] == player2 && board[1][1] == player2 && board[2][0] == player2){
             //change the gamestate to 4 (won)
             setGameState(4);
         }
@@ -158,14 +172,12 @@ public class TicTacToe implements Serializable{
             break;
         }
         
-        // if the active player is 1 place an X
-        if (getActivePlayer()==1) {
+        // set the letter according to the player
+        if(getActivePlayer()==1){
             board[row][col] = 'X';
-        } 
-        // otherwise an “O”
-        else {
+        }else{
             board[row][col] = 'O';
         }
-        
     }
+    
 }

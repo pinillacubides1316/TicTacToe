@@ -17,8 +17,9 @@ import java.util.ArrayList;
 public class GUIConsole extends JFrame implements ChatIF{
     
     final public static String host = "localhost";
-    // define the player 1
+    // define the players
     String player1;
+    String player2;
     /**
      * The default port to listen on.
      */
@@ -28,6 +29,7 @@ public class GUIConsole extends JFrame implements ChatIF{
     // instance  - class properties
     ChatClient client;
     EchoServer server;
+    static GUIConsole chat;
 
     
     // buttons
@@ -56,8 +58,11 @@ public class GUIConsole extends JFrame implements ChatIF{
     // main chat area
     private JTextArea messageList = new JTextArea();
     
-    private JComboBox<String> usersListCB = new JComboBox<>();
-    ArrayList<String> usersList;
+    JComboBox<String> usersListCB = new JComboBox<>();
+    
+    private TTTBoardGUI tttBoard;
+    
+    public GUIConsole(){}
 
     // constructor
     public GUIConsole ( String host, int port) //call the class we are extending - Jframe for this class
@@ -126,7 +131,6 @@ public class GUIConsole extends JFrame implements ChatIF{
                 }else{
                     client.handleClientCommand("#quit");
                 }
-                
             }
         });
 
@@ -147,48 +151,49 @@ public class GUIConsole extends JFrame implements ChatIF{
             {
                 // build a login command and send it to the server
                 client.handleMessageFromClientUI("#login "+loginTxF.getText());
+
+                // save the instance of GUIConsole to be able to populate the 
+                // ComboBox with connected users
+                client.saveGUIConsole(chat);
                 
-                player1 = loginTxF.getText();
-                //playersListCB.addItem(player1);
+                // Assing the client to the player1
+                player1 = loginTxF.getText(); 
                 
                 if(client != null){
-                    // loop to update the Jombobox (Users Connected)
+                    // send a message to the server to get the list of all the users connected
                     client.handleMessageFromClientUI("#usersConnected");
                 }
-                
                 // display a message for the user when is connected
                 send(" is connected!");
+                
             }
-
         });
         
-        // event handler - create an instance of the Tic Tac Toe object
-        // and display the TicTacToe Board
+        // send a message to be handled by the client with an id of ttt, player and player2 
         tictactoeB.addActionListener( new ActionListener()
         {
             public void actionPerformed(ActionEvent e)
             {
-                String player2 = "pp";
-                //player2 = getUserFromCB();
-                
                 client.handleClientCommand("#ttt " + player1 + " " + player2);
 
+                // save the client
+                saveClient();
             }
-
         });
         
-        /*EchoServer server = new EchoServer(5555);
-        String players = server.getAllUsersList();
-        playersListCB = new JComboBox<>(players);*/
-        
-        // event Handler to populate the combo box with the user's list
-        /*playersListCB.addActionListener(new ActionListener()
+        // when the client select a user from the list, assign it to the player2
+        usersListCB.addActionListener(new ActionListener ()
         {
-            public void actionPerformed(ActionEvent e){
-                
+            public void actionPerformed(ActionEvent e)
+            {
+                /*if(client != null){
+                    // send a message to the server to get the list of all the users connected
+                    client.handleMessageFromClientUI("#usersConnected");
+                }*/
+                player2 = (String)usersListCB.getSelectedItem();
             }
-        });*/
-        
+        });
+       
         // make the window visible
         setVisible(true);
 
@@ -205,11 +210,10 @@ public class GUIConsole extends JFrame implements ChatIF{
     }
     
     public static void main(String[] args){
-        //EchoServer server;
-        GUIConsole chat = new GUIConsole(host, DEFAULT_PORT); 
-        
+
+        chat = new GUIConsole(host, DEFAULT_PORT); 
     }
-    
+
     
     // gathers text fromm the messageTxf and sends it to the 
     // server via client.handleMessageFromClient
@@ -229,5 +233,13 @@ public class GUIConsole extends JFrame implements ChatIF{
                     + " Terminating client.");
             System.exit(1);
         }
+    }
+    
+    public void saveClient()
+    {
+        // get the TTTBoard saved to be able to save the client in TTTBoardGUI
+        tttBoard = client.getTTTBoard();
+        // save the client in TTTBoardGUI to be able to send the Board 2D Array to the server
+        tttBoard.saveClient(client);
     }
 }
