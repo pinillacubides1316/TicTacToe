@@ -165,12 +165,24 @@ public class EchoServer extends AbstractServer {
 
             }
         }
+        
         //build an envelope with Id of "usersConnected" and the Array<String> Users list
         Envelope env = new Envelope("usersConnected","",usersList);
-        try{
-            // send the envelope to the Client
-            client.sendToClient(env);
-        }catch(Exception ex){
+        
+        // loop through the client connections
+        // this second for loop will keep ALL clients updated with the current
+        // users connected to the server.
+        for(int i = 0; i < clientThreadList.length; i++)
+        {
+            
+            ConnectionToClient currentClient = ((ConnectionToClient) clientThreadList[i]);
+            try{
+                
+                // send the envelope to the current client
+                currentClient.sendToClient(env);
+            }
+            catch(Exception ex){
+            }
         }
     }
     

@@ -215,7 +215,7 @@ public class GUIConsole extends JFrame implements ChatIF{
     }
 
     
-    // gathers text fromm the messageTxf and sends it to the 
+    // gathers text from the messageTxf and sends it to the 
     // server via client.handleMessageFromClient
     public void send(String message){
 
