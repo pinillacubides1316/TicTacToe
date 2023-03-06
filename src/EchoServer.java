@@ -186,7 +186,7 @@ public class EchoServer extends AbstractServer {
         }
     }
     
-    
+    // server receives a #ttt command, and it unpacks the TicTacToe object 
     public void processTicTacToe( TicTacToe ttt, ConnectionToClient client ) {
 
         // extract all the attributes from TicTacToe
@@ -396,6 +396,7 @@ public class EchoServer extends AbstractServer {
             getAllUsersList(msgId,client);
         }
         
+        // this command 
         if(id.equals("ttt"))
         {
             String msgId = env.getId().toString();

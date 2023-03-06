@@ -207,9 +207,11 @@ public class ChatClient extends AbstractClient {
 
                 try {
                     String userId = message.substring(6,message.length()).trim();
-                    Envelope env = new Envelope("login","",userId);
                     
+                    Envelope env = new Envelope("login","",userId);
+          
                     openConnection();
+                    
                     //send to the server
                     sendToServer(env);
                 } catch (IOException e) {
