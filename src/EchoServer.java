@@ -94,7 +94,7 @@ public class EchoServer extends AbstractServer {
         }
     }
     
-    //only sends to clients in the same room
+    // only sends to clients in the same room
     public void sendToAClient(Object msg, ConnectionToClient sender, String pmTarget){
         Thread[] clientThreadList = getClientConnections();
         String userId = sender.getInfo("userId").toString();
@@ -257,7 +257,7 @@ public class EchoServer extends AbstractServer {
         }
     }
     
-    //send an instance of TicTacToe to a player
+    // send an instance of TicTacToe to a player
     public void sendEnvToPlayer(String id, String player, TicTacToe ticTacToe, ConnectionToClient sender){
         Thread[] clientThreadList = getClientConnections();
         // loop through all clients
@@ -328,6 +328,7 @@ public class EchoServer extends AbstractServer {
         }
     }
     
+    // get the TicTacToe Object from the user info 
     public TicTacToe getTicTacToeObj(ConnectionToClient client)
     {
         Thread[] clientThreadList = getClientConnections();
@@ -339,7 +340,7 @@ public class EchoServer extends AbstractServer {
             ConnectionToClient currentClient = ((ConnectionToClient) clientThreadList[i]);
             String currentClientUserId = currentClient.getInfo("userId").toString();
             
-            // if client[i] is the active player, send an envelope with the ticTacToe Object
+            // if client[i] is the active player, get the ticTacToe Object
             if(currentClientUserId.equals(userId))
             {
                 try{
@@ -375,6 +376,7 @@ public class EchoServer extends AbstractServer {
             sendToAClient(message,client,target);
         }
         
+        // get the message to be send to everyone in all the rooms
         if(id.equals("yell"))
         {
             String message = env.getContents().toString();
@@ -396,7 +398,7 @@ public class EchoServer extends AbstractServer {
             getAllUsersList(msgId,client);
         }
         
-        // this command 
+        // get the TicTacToe object and send it to be processed.
         if(id.equals("ttt"))
         {
             String msgId = env.getId().toString();
@@ -405,6 +407,7 @@ public class EchoServer extends AbstractServer {
             processTicTacToe(ttt,client);
         }
         
+        // if the player2 Declines to play
         if(id.equals("tttDecline"))
         {
             // extract the TicTacToe object from the userInfo
@@ -418,6 +421,7 @@ public class EchoServer extends AbstractServer {
             processTicTacToe(ticTacToe,client);
         }
         
+        // if the player2 Accepts to play
         if(id.equals("tttAccept"))
         {
             // extract TicTacToe object from userInfo

@@ -73,7 +73,7 @@ public class ChatClient extends AbstractClient {
         }
     }
     
-    //Handle the commands from server
+    // Handle the commands from server
     public void handleCommandFromServer(Envelope env){
         //if the envelope has an Id of “who”
         if (env.getId().equals("who"))
