@@ -347,24 +347,36 @@ public class ChatClient extends AbstractClient {
                     String player2 = player1and2.substring(player1and2.indexOf(" "), player1and2.length()).trim();
                     char[][] emptyBoard = new char[3][3];
                 
+                    
                     // create an instance of the Tic Tac Toe object
                     // Initial state sets player 1 to the inviting player, player 2 is in the User List combo box.  **** 
                     // Active player is 2, game state is 1 (invite).  The board is empty.
-                    TicTacToe ttt = new TicTacToe(player1,player2,2,1,emptyBoard);
-                    // ============== Solve the user list combo box=========================
-
-                    // display the TicTacToe board 
-                    tttBoard = new TTTBoardGUI();
-                    tttBoard.setVisible(true);
                     
-                    // save the TicTacTocGUI instance
-                    saveTTTBoard(tttBoard);
+                    // if player 1 or 2 is null, or player 1 equals player 2
+                    if(player1 == null && player2 == null || player1.equals(player2))
+                    {
+                        // display error message that you cannot play alone or against yourself,
+                        // prompts client to select another user
+                        clientUI.display("Cannot play TicTacToe alone or against yourself!\nTry selecting another user!");
+                    }
+                    else
+                    {
+                        TicTacToe ttt = new TicTacToe(player1,player2,2,1,emptyBoard);
+                        // ============== Solve the user list combo box=========================
 
-                    // create an envelope with the ttt object and send it to the server
-                    Envelope env = new Envelope("ttt","",ttt);
-                    
-                    //send to the server
-                    sendToServer(env);
+                        // display the TicTacToe board 
+                        tttBoard = new TTTBoardGUI();
+                        tttBoard.setVisible(true);
+
+                        // save the TicTacTocGUI instance
+                        saveTTTBoard(tttBoard);
+
+                        // create an envelope with the ttt object and send it to the server
+                        Envelope env = new Envelope("ttt","",ttt);
+
+                        //send to the server
+                        sendToServer(env);
+                    }
                 } catch (IOException e) {
                     clientUI.display("failed to connect to server.");
                 }
