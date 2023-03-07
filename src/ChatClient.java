@@ -334,6 +334,7 @@ public class ChatClient extends AbstractClient {
             }
         }
         
+        // #ttt to invite a user to play TicTacToe
         if(message.indexOf("#ttt ") >= 0){
             // cannot send any message if not clients connected 
             if (!isConnected()) {
@@ -370,6 +371,7 @@ public class ChatClient extends AbstractClient {
             }
         }
         
+        // #tttDecline to decline the TicTacToe invitation
         if(message.equals("#tttDecline"))
         {
             // cannot send any message if not clients connected 
@@ -393,6 +395,7 @@ public class ChatClient extends AbstractClient {
             } 
         }
         
+        // #tttAccept to Accept the TicTacToe invitation
         if(message.equals("#tttAccept"))
         {
             // cannot send any message if not clients connected 
@@ -420,6 +423,7 @@ public class ChatClient extends AbstractClient {
             }
         }
         
+        // #tttPlaying while the status is 3.
         if(message.equals("#tttPlaying"))
         {
             // cannot send any message if not clients connected 
@@ -492,7 +496,7 @@ public class ChatClient extends AbstractClient {
             ttt = new TicTacToe(player1,player2,activePlayer,gameState,board);
             tttBoard.saveGame(ttt);
             
-            // use UpdateBoardMethod to adjust button text properties?????????????
+            // use UpdateBoardMethod to adjust button text properties
             updateBoard(ttt);
         }
         
@@ -508,6 +512,7 @@ public class ChatClient extends AbstractClient {
         
     }
     
+    // adjust button text properties
     public void updateBoard(TicTacToe ttt){
         int move = 1;
         char[][] board = ttt.getBoard();

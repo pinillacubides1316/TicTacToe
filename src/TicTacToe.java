@@ -99,11 +99,11 @@ public class TicTacToe implements Serializable{
 
         // Check columns
         for (int j = 0; j < 3; j++) {
-            if ( board[0][j] == player1 && board[1][j] == player1 && board[1][j] == player1 ) { 
+            if ( board[0][j] == player1 && board[1][j] == player1 && board[2][j] == player1 ) { 
                 //change the gamestate to 4 (won)
                 setGameState(4);
             }
-            if( board[0][j] == player2 && board[1][j] == player2 && board[1][j] == player2 ){
+            if( board[0][j] == player2 && board[1][j] == player2 && board[2][j] == player2 ){
                 //change the gamestate to 4 (won)
                 setGameState(4);
             }
